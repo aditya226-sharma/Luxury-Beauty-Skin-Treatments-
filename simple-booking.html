@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Booking - Gurubaksh Beauty</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="animations.css">
+</head>
+<body>
+    <div style="padding: 2rem; max-width: 600px; margin: 2rem auto; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+        <h2 style="text-align: center; color: #d4af37; margin-bottom: 2rem;">Quick Booking Form</h2>
+        
+        <form id="simpleBookingForm">
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Name:</label>
+                <input type="text" name="name" required style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Phone:</label>
+                <input type="tel" name="phone" required style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px;">
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Service:</label>
+                <select name="service" required style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    <option value="">Select Service</option>
+                    <option value="facial">Facial Treatment</option>
+                    <option value="hair">Hair Treatment</option>
+                    <option value="bridal">Bridal Package</option>
+                    <option value="spa">Spa Treatment</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Preferred Date:</label>
+                <input type="date" name="date" required style="width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 8px;">
+            </div>
+            
+            <button type="submit" style="width: 100%; background: linear-gradient(45deg, #d4af37, #f4d03f); color: white; padding: 1rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">
+                Book Appointment
+            </button>
+        </form>
+        
+        <div id="result" style="margin-top: 1rem; padding: 1rem; border-radius: 8px; display: none;"></div>
+    </div>
+
+    <script>
+        document.getElementById('simpleBookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                service: formData.get('service'),
+                date: formData.get('date'),
+                token: 'GB' + Date.now().toString().slice(-6),
+                created_at: new Date().toLocaleString()
+            };
+            
+            // Save to localStorage
+            let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            bookings.push(data);
+            localStorage.setItem('bookings', JSON.stringify(bookings));
+            
+            // Show success message
+            const result = document.getElementById('result');
+            result.style.display = 'block';
+            result.style.background = '#d4edda';
+            result.style.color = '#155724';
+            result.innerHTML = `
+                <h3>Booking Confirmed!</h3>
+                <p><strong>Token Number:</strong> ${data.token}</p>
+                <p><strong>Name:</strong> ${data.name}</p>
+                <p><strong>Service:</strong> ${data.service}</p>
+                <p><strong>Date:</strong> ${data.date}</p>
+                <p>Please save your token number for reference.</p>
+                <button onclick="sendWhatsApp('${data.token}', '${data.name}', '${data.service}', '${data.date}')" 
+                        style="background: #25d366; color: white; padding: 0.5rem 1rem; border: none; border-radius: 5px; margin-top: 1rem; cursor: pointer;">
+                    Send to WhatsApp
+                </button>
+            `;
+            
+            this.reset();
+        });
+        
+        function sendWhatsApp(token, name, service, date) {
+            const message = `Hello! I have booked an appointment at Gurubaksh Beauty Parlour.
+            
+Token: ${token}
+Name: ${name}
+Service: ${service}
+Date: ${date}
+
+Please confirm my appointment. Thank you!`;
+            
+            window.open(`https://wa.me/919876543210?text=${encodeURIComponent(message)}`, '_blank');
+        }
+        
+        // Set minimum date to today
+        document.querySelector('input[type="date"]').min = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html>
