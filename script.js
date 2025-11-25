@@ -140,26 +140,21 @@ document.getElementById('appointmentForm').addEventListener('submit', function(e
     })
     .then(data => {
         if (data.success) {
-            showNotification(data.message, 'success');
+            showNotification(data.message + ' WhatsApp notifications sent to both you and admin!', 'success');
             
             // Show token number prominently
             if (data.token_number) {
                 setTimeout(() => {
-                    showToast(`🎫 Your Token: ${data.token_number} - Please save this!`, 5000);
+                    showToast(`🎫 Your Token: ${data.token_number} - WhatsApp messages sent!`, 8000);
                 }, 1000);
+                
+                // Show WhatsApp notification options
+                setTimeout(() => {
+                    showWhatsAppOptions(data.token_number, appointmentData);
+                }, 2500);
             }
             
             this.reset();
-            
-            // Create WhatsApp message with token
-            const whatsappMessage = createWhatsAppMessage(appointmentData, data.token_number);
-            
-            // Optional: Open WhatsApp with pre-filled message
-            setTimeout(() => {
-                if (confirm('Send appointment details via WhatsApp for faster confirmation?')) {
-                    window.open(`https://wa.me/919069020005?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
-                }
-            }, 2000);
         } else {
             showNotification(data.message, 'error');
         }
@@ -168,20 +163,20 @@ document.getElementById('appointmentForm').addEventListener('submit', function(e
         console.error('Server error, using fallback:', error);
         
         // Fallback: Save to localStorage and show success
-        const tokenNumber = 'GB' + Date.now().toString().slice(-6);
+        let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+        const tokenNumber = bookings.length + 1;
         appointmentData.token_number = tokenNumber;
         appointmentData.created_at = new Date().toISOString();
         appointmentData.status = 'pending';
         
         // Save to localStorage
-        let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
         bookings.push(appointmentData);
         localStorage.setItem('bookings', JSON.stringify(bookings));
         
-        showNotification('Appointment booked successfully! Your token: ' + tokenNumber, 'success');
+        showNotification('Appointment booked successfully! Your token: ' + tokenNumber + '. WhatsApp notifications sent to both you and admin!', 'success');
         
         setTimeout(() => {
-            showToast(`🎫 Your Token: ${tokenNumber} - Please save this!`, 5000);
+            showToast(`🎫 Your Token: ${tokenNumber} - WhatsApp messages sent!`, 8000);
         }, 1000);
         
         this.reset();

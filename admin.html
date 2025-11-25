@@ -23,40 +23,115 @@
         .btn-confirm { background: #28a745; color: white; }
         .btn-delete { background: #dc3545; color: white; }
         .no-bookings { text-align: center; color: #666; padding: 2rem; }
+        .stats { background: white; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-around; }
+        .stat-item { text-align: center; }
+        .stat-number { font-size: 2rem; font-weight: bold; color: #d4af37; }
+        .stat-label { color: #666; font-size: 0.9rem; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Gurubaksh Beauty - Admin Panel</h1>
+        <h1>Simran Beauty - Admin Panel</h1>
         <p>Manage Appointments</p>
+        <div style="margin-top: 1rem;">
+            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <label for="fromDate" style="font-weight: bold;">From:</label>
+                    <input type="date" id="fromDate" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <label for="toDate" style="font-weight: bold;">To:</label>
+                    <input type="date" id="toDate" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <a href="#" onclick="exportToExcel()" class="btn" style="background: #28a745; color: white; text-decoration: none; display: inline-block;">
+                    📊 Export to Excel
+                </a>
+                <button onclick="loadBookings()" class="btn" style="background: #007bff; color: white;">
+                    🔄 Refresh
+                </button>
+                <button onclick="logout()" class="btn" style="background: #dc3545; color: white;">
+                    🚪 Logout
+                </button>
+            </div>
+        </div>
     </div>
     
     <div class="container">
+        <div class="stats" id="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="total-bookings">0</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="pending-bookings">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="confirmed-bookings">0</div>
+                <div class="stat-label">Confirmed</div>
+            </div>
+        </div>
+        
         <div id="bookings-container">
             <div class="no-bookings">Loading bookings...</div>
         </div>
     </div>
 
     <script>
+        // Check admin authentication
+        function checkAuth() {
+            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+            
+            if (!isLoggedIn) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+        
+        // Check auth on page load
+        if (!checkAuth()) {
+            return;
+        }
+        
+        // Set default date range (last 30 days)
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+            
+            document.getElementById('toDate').value = today.toISOString().split('T')[0];
+            document.getElementById('fromDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+        });
+        
         function loadBookings() {
             // Try to fetch from PHP, fallback to localStorage
-        fetch('get-bookings.php')
+            fetch('get-bookings.php')
                 .then(response => {
                     if (!response.ok) throw new Error('Server not available');
                     return response.json();
                 })
                 .then(data => {
+                    console.log('Loaded bookings:', data);
                     displayBookings(data);
                 })
                 .catch(error => {
-                    console.log('Using localStorage fallback');
+                    console.log('Server error, using localStorage fallback:', error);
                     const localBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
                     displayBookings(localBookings);
                 });
-    }
+        }
     
     function displayBookings(data) {
         const container = document.getElementById('bookings-container');
+        
+        // Update statistics
+        const totalBookings = data.length;
+        const pendingBookings = data.filter(b => b.status === 'pending').length;
+        const confirmedBookings = data.filter(b => b.status === 'confirmed').length;
+        
+        document.getElementById('total-bookings').textContent = totalBookings;
+        document.getElementById('pending-bookings').textContent = pendingBookings;
+        document.getElementById('confirmed-bookings').textContent = confirmedBookings;
         
         if (data.length === 0) {
             container.innerHTML = '<div class="no-bookings">No bookings found.</div>';
@@ -66,50 +141,51 @@
         container.innerHTML = data.map(booking => `
                         <div class="booking-card">
                             <div class="booking-header">
-                                <span class="booking-id">Token: ${booking.token_number || booking.id}</span>
-                                <span class="status ${booking.status}">${booking.status.toUpperCase()}</span>
+                                <span class="booking-id">Token: #${booking.token_number || booking.id}</span>
+                                <span class="status ${booking.status || 'pending'}">${(booking.status || 'pending').toUpperCase()}</span>
                             </div>
                             <div class="booking-details">
                                 <div class="detail-item">
                                     <div class="detail-label">Token Number:</div>
-                                    <div><strong>${booking.token_number || 'N/A'}</strong></div>
+                                    <div><strong>#${booking.token_number || 'N/A'}</strong></div>
                                 </div>
                                 <div class="detail-item">
                                     <div class="detail-label">Name:</div>
-                                    <div>${booking.name}</div>
+                                    <div>${booking.name || 'N/A'}</div>
                                 </div>
                                 <div class="detail-item">
                                     <div class="detail-label">Phone:</div>
-                                    <div>${booking.phone}</div>
+                                    <div>+91 ${booking.phone || 'N/A'}</div>
                                 </div>
                                 <div class="detail-item">
                                     <div class="detail-label">Email:</div>
-                                    <div>${booking.email}</div>
+                                    <div>${booking.email || 'N/A'}</div>
                                 </div>
                                 <div class="detail-item">
                                     <div class="detail-label">Service:</div>
-                                    <div>${booking.service}</div>
+                                    <div>${booking.service || 'N/A'}</div>
                                 </div>
                                 <div class="detail-item">
                                     <div class="detail-label">Date:</div>
-                                    <div>${booking.date}</div>
+                                    <div>${booking.date || 'N/A'}</div>
                                 </div>
                                 <div class="detail-item">
                                     <div class="detail-label">Time:</div>
-                                    <div>${booking.time}</div>
+                                    <div>${booking.time || 'N/A'}</div>
                                 </div>
                                 <div class="detail-item">
                                     <div class="detail-label">Message:</div>
-                                    <div>${booking.message || 'No message'}</div>
+                                    <div>${booking.message || 'No special requests'}</div>
                                 </div>
                                 <div class="detail-item">
-                                    <div class="detail-label">Created:</div>
-                                    <div>${booking.created_at}</div>
+                                    <div class="detail-label">Booking Date:</div>
+                                    <div>${booking.created_at || 'N/A'}</div>
                                 </div>
                             </div>
                             <div class="actions">
-                                ${booking.status === 'pending' ? `<button class="btn btn-confirm" onclick="updateStatus('${booking.id}', 'confirmed')">Confirm</button>` : ''}
-                                <button class="btn btn-delete" onclick="deleteBooking('${booking.id}')">Delete</button>
+                                ${(booking.status || 'pending') === 'pending' ? `<button class="btn btn-confirm" onclick="updateStatus('${booking.id || booking.token_number}', 'confirmed')">✅ Confirm</button>` : ''}
+                                <button class="btn btn-delete" onclick="deleteBooking('${booking.id || booking.token_number}')">🗑️ Delete</button>
+                                <a href="https://wa.me/91${booking.phone}?text=Hello ${booking.name}, your appointment (Token: ${booking.token_number}) has been confirmed at Simran Beauty Parlour." target="_blank" class="btn" style="background: #25D366; color: white; text-decoration: none; display: inline-block;">📱 WhatsApp</a>
                             </div>
                         </div>
         `).join('');
@@ -176,6 +252,44 @@
         
         // Load bookings on page load
         loadBookings();
+        
+        // Export to Excel function
+        function exportToExcel() {
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            
+            // Create URL with parameters for direct download
+            const params = new URLSearchParams({
+                'auth_token': 'simran_admin_2024',
+                'from_date': fromDate,
+                'to_date': toDate
+            });
+            
+            // Open in new window to trigger download
+            window.open('secure-export.php?' + params.toString(), '_blank');
+        }
+        
+        // Logout function
+        function logout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            window.location.href = 'admin-login.html';
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+            
+            if (document.getElementById('toDate')) {
+                document.getElementById('toDate').value = today.toISOString().split('T')[0];
+            }
+            if (document.getElementById('fromDate')) {
+                document.getElementById('fromDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+            }
+            
+            // Load bookings after DOM is ready
+            loadBookings();
+        });
         
         // Refresh every 30 seconds
         setInterval(loadBookings, 30000);

@@ -336,6 +336,12 @@
         <i class="fab fa-whatsapp"></i>
     </a>
     
+    <script>
+        // Check if user is logged in
+        if (!sessionStorage.getItem('userLoggedIn') && !sessionStorage.getItem('adminLoggedIn')) {
+            window.location.href = 'login.html';
+        }
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
