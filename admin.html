@@ -134,7 +134,7 @@
         document.getElementById('confirmed-bookings').textContent = confirmedBookings;
         
         if (data.length === 0) {
-            container.innerHTML = '<div class="no-bookings">No bookings found.</div>';
+            container.innerHTML = '<div class="no-bookings">📋 No bookings found. <a href="booking.html">Create a test booking</a> or <a href="verify-system.php">verify system</a>.</div>';
             return;
         }
                     
@@ -146,40 +146,44 @@
                             </div>
                             <div class="booking-details">
                                 <div class="detail-item">
-                                    <div class="detail-label">Token Number:</div>
-                                    <div><strong>#${booking.token_number || 'N/A'}</strong></div>
+                                    <div class="detail-label">🎫 Token Number:</div>
+                                    <div><strong style="color: #d4af37; font-size: 1.2em;">#${booking.token_number || 'N/A'}</strong></div>
                                 </div>
                                 <div class="detail-item">
-                                    <div class="detail-label">Name:</div>
-                                    <div>${booking.name || 'N/A'}</div>
+                                    <div class="detail-label">👤 Customer Name:</div>
+                                    <div><strong>${booking.name || 'N/A'}</strong></div>
                                 </div>
                                 <div class="detail-item">
-                                    <div class="detail-label">Phone:</div>
-                                    <div>+91 ${booking.phone || 'N/A'}</div>
+                                    <div class="detail-label">📱 Phone Number:</div>
+                                    <div><strong>+91 ${booking.phone || 'N/A'}</strong></div>
                                 </div>
                                 <div class="detail-item">
-                                    <div class="detail-label">Email:</div>
+                                    <div class="detail-label">📧 Email Address:</div>
                                     <div>${booking.email || 'N/A'}</div>
                                 </div>
                                 <div class="detail-item">
-                                    <div class="detail-label">Service:</div>
-                                    <div>${booking.service || 'N/A'}</div>
+                                    <div class="detail-label">💄 Service Requested:</div>
+                                    <div><strong>${booking.service || 'N/A'}</strong></div>
                                 </div>
                                 <div class="detail-item">
-                                    <div class="detail-label">Date:</div>
-                                    <div>${booking.date || 'N/A'}</div>
+                                    <div class="detail-label">📅 Appointment Date:</div>
+                                    <div><strong>${booking.date || 'N/A'}</strong></div>
                                 </div>
                                 <div class="detail-item">
-                                    <div class="detail-label">Time:</div>
-                                    <div>${booking.time || 'N/A'}</div>
+                                    <div class="detail-label">⏰ Appointment Time:</div>
+                                    <div><strong>${booking.time || 'N/A'}</strong></div>
                                 </div>
                                 <div class="detail-item">
-                                    <div class="detail-label">Message:</div>
-                                    <div>${booking.message || 'No special requests'}</div>
+                                    <div class="detail-label">💬 Special Requests:</div>
+                                    <div style="font-style: italic;">${booking.message || 'No special requests'}</div>
                                 </div>
                                 <div class="detail-item">
-                                    <div class="detail-label">Booking Date:</div>
+                                    <div class="detail-label">📝 Booking Created:</div>
                                     <div>${booking.created_at || 'N/A'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">📊 Current Status:</div>
+                                    <div><span class="status ${booking.status || 'pending'}" style="padding: 4px 8px; border-radius: 12px;">${(booking.status || 'pending').toUpperCase()}</span></div>
                                 </div>
                             </div>
                             <div class="actions">
