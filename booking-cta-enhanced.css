@@ -1,0 +1,636 @@
+/* Enhanced Book Now CTA Styles */
+
+/* Enhanced Book Now CTA Section */
+.book-now-cta {
+    position: relative;
+    padding: 5rem 0;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    overflow: hidden;
+}
+
+.book-now-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="sparkle" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:%23d4af37;stop-opacity:0.3"/><stop offset="100%" style="stop-color:%23d4af37;stop-opacity:0"/></radialGradient></defs><circle cx="20" cy="30" r="2" fill="url(%23sparkle)"/><circle cx="80" cy="20" r="1.5" fill="url(%23sparkle)"/><circle cx="60" cy="70" r="2.5" fill="url(%23sparkle)"/><circle cx="30" cy="80" r="1" fill="url(%23sparkle)"/><circle cx="90" cy="60" r="1.5" fill="url(%23sparkle)"/></svg>');
+    animation: sparkleMove 20s linear infinite;
+}
+
+@keyframes sparkleMove {
+    0% { transform: translateX(-100px) translateY(-100px); }
+    100% { transform: translateX(100px) translateY(100px); }
+}
+
+.cta-content {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 4rem;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.cta-text {
+    color: white;
+}
+
+.cta-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(184, 148, 31, 0.2));
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(10px);
+}
+
+.cta-text h2 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #ffffff, #d4af37);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+}
+
+.cta-text p {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.cta-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.cta-feature {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+.cta-feature i {
+    width: 20px;
+    color: #d4af37;
+    font-size: 1.1rem;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.cta-btn.enhanced-pulse {
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-btn.enhanced-pulse::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shimmerPulse 2s infinite;
+}
+
+@keyframes shimmerPulse {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.cta-btn.whatsapp {
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    border-color: #25d366;
+}
+
+.cta-btn.whatsapp:hover {
+    background: linear-gradient(135deg, #128c7e, #075e54);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+}
+
+.cta-btn.call {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border-color: #007bff;
+}
+
+.cta-btn.call:hover {
+    background: linear-gradient(135deg, #0056b3, #004085);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 123, 255, 0.4);
+}
+
+/* CTA Visual */
+.cta-visual {
+    position: relative;
+}
+
+.booking-preview {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.preview-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.preview-header i {
+    color: #d4af37;
+    font-size: 1.2rem;
+}
+
+.preview-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.preview-step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 10px;
+    border-left: 3px solid #d4af37;
+}
+
+.step-number {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, #d4af37, #b8941f);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.preview-step span {
+    color: #333;
+    font-weight: 500;
+}
+
+.preview-footer {
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(184, 148, 31, 0.1));
+    border-radius: 10px;
+    color: #d4af37;
+    font-weight: 600;
+}
+
+.floating-testimonial {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    background: white;
+    border-radius: 15px;
+    padding: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 200px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.floating-testimonial .stars {
+    color: #ffc107;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.floating-testimonial p {
+    font-size: 0.8rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.floating-testimonial .client-name {
+    font-size: 0.7rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Urgent Booking Banner */
+.urgent-booking {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    padding: 1.5rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.urgent-booking::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(255, 255, 255, 0.1) 10px,
+        rgba(255, 255, 255, 0.1) 20px
+    );
+    animation: urgentMove 2s linear infinite;
+}
+
+@keyframes urgentMove {
+    0% { transform: translateX(-20px); }
+    100% { transform: translateX(20px); }
+}
+
+.urgent-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.urgent-icon {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 1.5s infinite;
+}
+
+.urgent-icon i {
+    color: white;
+    font-size: 1.5rem;
+}
+
+.urgent-text {
+    flex: 1;
+    color: white;
+}
+
+.urgent-text h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.urgent-text p {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.urgent-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.urgent-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background: white;
+    color: #ff6b6b;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.urgent-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    background: #f8f9fa;
+}
+
+.urgent-timer {
+    text-align: center;
+    color: white;
+}
+
+.urgent-timer span {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+}
+
+.urgent-timer small {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* Final CTA Section */
+.final-cta {
+    position: relative;
+    padding: 4rem 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    text-align: center;
+}
+
+.final-cta-content h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.final-cta-content p {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 2.5rem;
+}
+
+.cta-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-bottom: 2.5rem;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #d4af37;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.final-cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.final-cta-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem 2.5rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.final-cta-btn.primary {
+    background: linear-gradient(135deg, #d4af37, #b8941f);
+    color: white;
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+}
+
+.final-cta-btn.primary:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
+}
+
+.final-cta-btn.secondary {
+    background: white;
+    color: #333;
+    border: 2px solid #d4af37;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.final-cta-btn.secondary:hover {
+    background: #d4af37;
+    color: white;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
+}
+
+.btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Enhanced Offer Buttons */
+.offer-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #d4af37, #b8941f);
+    color: white;
+    text-decoration: none;
+    border-radius: 15px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.offer-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+}
+
+.offer-btn i {
+    font-size: 1rem;
+}
+
+/* Pulse Animation Enhancement */
+.pulse-animation {
+    animation: enhancedPulse 2s infinite;
+}
+
+@keyframes enhancedPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(212, 175, 55, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .cta-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        text-align: center;
+    }
+    
+    .cta-text h2 {
+        font-size: 2.5rem;
+    }
+    
+    .floating-testimonial {
+        position: static;
+        margin-top: 2rem;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .cta-text h2 {
+        font-size: 2rem;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .cta-btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+    
+    .urgent-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .urgent-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .cta-stats {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .final-cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .final-cta-btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+    
+    .final-cta-content h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .book-now-cta {
+        padding: 3rem 0;
+    }
+    
+    .cta-text h2 {
+        font-size: 1.75rem;
+    }
+    
+    .cta-text p {
+        font-size: 1rem;
+    }
+    
+    .booking-preview {
+        padding: 1.5rem;
+    }
+    
+    .urgent-text h3 {
+        font-size: 1.25rem;
+    }
+    
+    .urgent-text p {
+        font-size: 0.9rem;
+    }
+    
+    .final-cta-content h2 {
+        font-size: 1.75rem;
+    }
+    
+    .final-cta-content p {
+        font-size: 1rem;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .pulse-animation,
+    .enhanced-pulse::before,
+    .btn-shine,
+    .floating-testimonial,
+    .urgent-booking::before {
+        animation: none !important;
+    }
+}
+
+/* Focus styles for keyboard navigation */
+.cta-btn:focus,
+.urgent-btn:focus,
+.final-cta-btn:focus {
+    outline: 3px solid rgba(212, 175, 55, 0.5);
+    outline-offset: 2px;
+}

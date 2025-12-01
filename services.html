@@ -244,7 +244,7 @@
 
     <script>
         // Check if user is logged in
-        if (!sessionStorage.getItem('userLoggedIn') && !sessionStorage.getItem('adminLoggedIn')) {
+        if (!localStorage.getItem('userLoggedIn') && !sessionStorage.getItem('adminLoggedIn')) {
             window.location.href = 'login.html';
         }
     </script>

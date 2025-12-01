@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Admin Details</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .field { margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 5px; }
+        .label { font-weight: bold; color: #333; }
+        .value { color: #666; margin-left: 10px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h2>✅ Admin Section - All Booking Details Verification</h2>
+    
+    <div id="verification">
+        <p>Loading booking details...</p>
+    </div>
+
+    <script>
+        async function verifyBookingDetails() {
+            try {
+                const response = await fetch('get-bookings.php');
+                const bookings = await response.json();
+                
+                const container = document.getElementById('verification');
+                
+                if (bookings.length === 0) {
+                    container.innerHTML = '<p class="error">No bookings found</p>';
+                    return;
+                }
+                
+                const booking = bookings[0]; // Check first booking
+                
+                const requiredFields = [
+                    'id', 'token_number', 'name', 'phone', 'email', 'service', 
+                    'service_name', 'service_price', 'date', 'time', 'time_display',
+                    'message', 'customer_source', 'login_name', 'login_phone',
+                    'booking_ip', 'user_agent', 'referrer', 'session_id',
+                    'booking_method', 'payment_status', 'estimated_duration',
+                    'created_at', 'updated_at', 'status'
+                ];
+                
+                let html = '<h3>Booking Details Available in Admin:</h3>';
+                
+                requiredFields.forEach(field => {
+                    const hasField = booking.hasOwnProperty(field);
+                    const value = booking[field] || 'Not set';
+                    const status = hasField ? '✅' : '❌';
+                    const className = hasField ? 'success' : 'error';
+                    
+                    html += `
+                        <div class="field">
+                            <span class="${className}">${status}</span>
+                            <span class="label">${field}:</span>
+                            <span class="value">${value}</span>
+                        </div>
+                    `;
+                });
+                
+                const totalFields = requiredFields.length;
+                const availableFields = requiredFields.filter(field => booking.hasOwnProperty(field)).length;
+                const percentage = Math.round((availableFields / totalFields) * 100);
+                
+                html += `
+                    <div style="margin-top: 20px; padding: 15px; background: ${percentage === 100 ? '#d4edda' : '#fff3cd'}; border-radius: 5px;">
+                        <h4>Summary: ${availableFields}/${totalFields} fields available (${percentage}%)</h4>
+                        ${percentage === 100 ? 
+                            '<p class="success">✅ ALL booking details are saved and available in admin section!</p>' : 
+                            '<p class="error">❌ Some booking details are missing</p>'
+                        }
+                    </div>
+                `;
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                document.getElementById('verification').innerHTML = 
+                    `<p class="error">Error loading bookings: ${error.message}</p>`;
+            }
+        }
+        
+        verifyBookingDetails();
+    </script>
+</body>
+</html>

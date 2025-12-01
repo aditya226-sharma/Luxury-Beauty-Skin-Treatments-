@@ -6,6 +6,7 @@
     <title>Book Appointment - Simran Beauty Parlour</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="booking-enhanced.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -32,73 +33,179 @@
         </div>
     </nav>
 
-    <!-- Booking Section -->
+    <!-- Enhanced Booking Section -->
     <section class="booking" style="padding-top: 120px;">
         <div class="bg-animation bg-gradient-move"></div>
         <div class="container">
             <span class="section-badge">📅 Reserve Your Slot</span>
             <h2 class="section-title animate-fade-up">Book Your Appointment</h2>
-            <p class="section-subtitle animate-fade-up">Schedule your beauty transformation with our expert team</p>
+            <p class="section-subtitle animate-fade-up">Schedule your beauty transformation with our expert team in 3 easy steps</p>
+            
             <div class="booking-content">
                 <div class="booking-form">
+                    <div class="form-header">
+                        <h3>Book Your Appointment</h3>
+                        <p>Fill in your details to secure your preferred slot</p>
+                    </div>
+                    
+                    <!-- Step Indicator -->
+                    <div class="step-indicator">
+                        <div class="step active" data-step="1">
+                            <i class="fas fa-user"></i>
+                            <span>Personal Info</span>
+                        </div>
+                        <div class="step" data-step="2">
+                            <i class="fas fa-spa"></i>
+                            <span>Service & Date</span>
+                        </div>
+                        <div class="step" data-step="3">
+                            <i class="fas fa-check"></i>
+                            <span>Confirmation</span>
+                        </div>
+                    </div>
+                    
                     <form id="appointmentForm">
-                        <div class="form-group">
-                            <label for="name">Full Name</label>
-                            <input type="text" id="name" name="name" required>
+                        <!-- Step 1: Personal Information -->
+                        <div class="form-step active" data-step="1">
+                            <div class="form-group" data-icon="user">
+                                <label for="name">Full Name *</label>
+                                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                            </div>
+                            <div class="form-group" data-icon="phone">
+                                <label for="phone">Phone Number *</label>
+                                <input type="tel" id="phone" name="phone" placeholder="+91 XXXXX XXXXX" required>
+                            </div>
+                            <div class="form-group" data-icon="email">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="phone">Phone Number</label>
-                            <input type="tel" id="phone" name="phone" required>
+                        
+                        <!-- Step 2: Service Selection -->
+                        <div class="form-step" data-step="2">
+                            <div class="form-group">
+                                <label>Select Service *</label>
+                                <div class="service-grid">
+                                    <div class="service-option" data-service="facial" data-price="₹1,500">
+                                        <i class="fas fa-leaf"></i>
+                                        <span>Facial Treatment</span>
+                                        <div class="price">₹1,500</div>
+                                    </div>
+                                    <div class="service-option" data-service="hair" data-price="₹2,000">
+                                        <i class="fas fa-cut"></i>
+                                        <span>Hair Treatment</span>
+                                        <div class="price">₹2,000</div>
+                                    </div>
+                                    <div class="service-option" data-service="bridal" data-price="₹15,000">
+                                        <i class="fas fa-crown"></i>
+                                        <span>Bridal Package</span>
+                                        <div class="price">₹15,000</div>
+                                    </div>
+                                    <div class="service-option" data-service="spa" data-price="₹3,500">
+                                        <i class="fas fa-spa"></i>
+                                        <span>Spa Package</span>
+                                        <div class="price">₹3,500</div>
+                                    </div>
+                                    <div class="service-option" data-service="manicure" data-price="₹800">
+                                        <i class="fas fa-hand-sparkles"></i>
+                                        <span>Manicure & Pedicure</span>
+                                        <div class="price">₹800</div>
+                                    </div>
+                                    <div class="service-option" data-service="massage" data-price="₹2,500">
+                                        <i class="fas fa-hands"></i>
+                                        <span>Body Massage</span>
+                                        <div class="price">₹2,500</div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="service" name="service" required>
+                            </div>
+                            
+                            <div class="form-group" data-icon="calendar">
+                                <label for="date">Preferred Date *</label>
+                                <input type="date" id="date" name="date" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Preferred Time *</label>
+                                <div class="time-slots">
+                                    <div class="time-slot" data-time="10:00">10:00 AM</div>
+                                    <div class="time-slot" data-time="11:00">11:00 AM</div>
+                                    <div class="time-slot" data-time="12:00">12:00 PM</div>
+                                    <div class="time-slot" data-time="14:00">2:00 PM</div>
+                                    <div class="time-slot" data-time="15:00">3:00 PM</div>
+                                    <div class="time-slot" data-time="16:00">4:00 PM</div>
+                                    <div class="time-slot" data-time="17:00">5:00 PM</div>
+                                    <div class="time-slot" data-time="18:00">6:00 PM</div>
+                                </div>
+                                <input type="hidden" id="time" name="time" required>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" required>
+                        
+                        <!-- Step 3: Confirmation -->
+                        <div class="form-step" data-step="3">
+                            <div class="form-group" data-icon="message">
+                                <label for="message">Special Requests (Optional)</label>
+                                <textarea id="message" name="message" rows="4" placeholder="Any special requirements or preferences..."></textarea>
+                            </div>
+                            
+                            <div class="booking-summary">
+                                <h4>Booking Summary</h4>
+                                <div class="summary-item">
+                                    <span>Service:</span>
+                                    <span id="summary-service">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Date:</span>
+                                    <span id="summary-date">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Time:</span>
+                                    <span id="summary-time">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Total Amount:</span>
+                                    <span id="summary-price">-</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="service">Select Service</label>
-                            <select id="service" name="service" required>
-                                <option value="">Choose a service</option>
-                                <option value="facial">Facial Treatment</option>
-                                <option value="hair">Hair Treatment</option>
-                                <option value="bridal">Bridal Package</option>
-                                <option value="spa">Spa Package</option>
-                                <option value="manicure">Manicure & Pedicure</option>
-                                <option value="massage">Body Massage</option>
-                            </select>
+                        
+                        <!-- Form Navigation -->
+                        <div class="form-navigation">
+                            <button type="button" class="nav-btn prev" id="prevBtn" style="display: none;">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>Previous</span>
+                            </button>
+                            <button type="button" class="nav-btn next" id="nextBtn">
+                                <span>Next</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                            <button type="submit" class="nav-btn submit" id="submitBtn" style="display: none;">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Book Appointment</span>
+                            </button>
                         </div>
-                        <div class="form-group">
-                            <label for="date">Preferred Date</label>
-                            <input type="date" id="date" name="date" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="time">Preferred Time</label>
-                            <select id="time" name="time" required>
-                                <option value="">Select time</option>
-                                <option value="10:00">10:00 AM</option>
-                                <option value="11:00">11:00 AM</option>
-                                <option value="12:00">12:00 PM</option>
-                                <option value="14:00">2:00 PM</option>
-                                <option value="15:00">3:00 PM</option>
-                                <option value="16:00">4:00 PM</option>
-                                <option value="17:00">5:00 PM</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="message">Special Requests</label>
-                            <textarea id="message" name="message" rows="3"></textarea>
-                        </div>
-                        <button type="submit" class="submit-btn">Book Appointment</button>
                     </form>
+                    
+                    <!-- Loading State -->
+                    <div class="loading" id="loadingState">
+                        <div class="spinner"></div>
+                        <p>Processing your booking...</p>
+                    </div>
+                    
+                    <!-- Success Message -->
+                    <div class="success-message" id="successMessage">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Booking Confirmed!</h3>
+                        <p>Your appointment has been successfully booked. We'll send you a confirmation message shortly.</p>
+                    </div>
                 </div>
+                
                 <div class="booking-info">
                     <h3>Quick Contact</h3>
+                    
                     <div class="contact-item">
                         <i class="fas fa-phone"></i>
                         <span>+91 90690 20005</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fab fa-whatsapp"></i>
-                        <span>WhatsApp: +91 90690 20005</span>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-envelope"></i>
@@ -107,6 +214,41 @@
                     <div class="contact-item">
                         <i class="fas fa-clock"></i>
                         <span>Mon-Sun: 10:00 AM - 8:00 PM</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Beniwall Mohalla, Panipat</span>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <a href="https://wa.me/919069020005?text=Hi! I want to book an appointment at Simran Beauty Parlour" class="quick-action-btn whatsapp" target="_blank">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>WhatsApp Booking</span>
+                        </a>
+                        <a href="tel:+919069020005" class="quick-action-btn">
+                            <i class="fas fa-phone"></i>
+                            <span>Call Now</span>
+                        </a>
+                    </div>
+                    
+                    <div class="booking-summary" id="liveSummary" style="display: none;">
+                        <h4>Your Selection</h4>
+                        <div class="summary-item">
+                            <span>Service:</span>
+                            <span id="live-service">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Date:</span>
+                            <span id="live-date">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Time:</span>
+                            <span id="live-time">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Amount:</span>
+                            <span id="live-price">-</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -165,9 +307,19 @@
     <script>
         // Check if user is logged in
         if (!sessionStorage.getItem('userLoggedIn') && !sessionStorage.getItem('adminLoggedIn')) {
-            window.location.href = 'login.html';
+            window.location.href = 'enhanced-login.html';
+        }
+        
+        // Pre-fill form with customer data if available
+        const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+        if (userData.name && userData.phone) {
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('name').value = userData.name;
+                document.getElementById('phone').value = userData.phone;
+            });
         }
     </script>
     <script src="script.js"></script>
+    <script src="booking-enhanced.js"></script>
 </body>
 </html>

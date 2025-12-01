@@ -4,6 +4,19 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
+// Function to get estimated service duration
+function getServiceDuration($service) {
+    $durations = [
+        'facial' => '90 minutes',
+        'hair' => '120 minutes', 
+        'bridal' => '240 minutes',
+        'spa' => '150 minutes',
+        'manicure' => '60 minutes',
+        'massage' => '90 minutes'
+    ];
+    return $durations[strtolower($service)] ?? '60 minutes';
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Method not allowed']);
@@ -52,15 +65,22 @@ if ($appointment_date < $today) {
     exit;
 }
 
-// Generate simple sequential token number
+// Generate token number with date prefix
 $bookings_file = 'bookings.json';
 $existing_bookings = [];
 if (file_exists($bookings_file)) {
     $existing_bookings = json_decode(file_get_contents($bookings_file), true) ?: [];
 }
 
-// Get next token number (simple sequential: 1, 2, 3, etc.)
-$token_number = count($existing_bookings) + 1;
+// Get today's date for token prefix
+$today = date('Ymd'); // Format: 20241201
+$today_bookings = array_filter($existing_bookings, function($booking) use ($today) {
+    return isset($booking['created_at']) && date('Ymd', strtotime($booking['created_at'])) === $today;
+});
+
+// Generate token number: YYYYMMDD-001, YYYYMMDD-002, etc.
+$daily_count = count($today_bookings) + 1;
+$token_number = $today . '-' . str_pad($daily_count, 3, '0', STR_PAD_LEFT);
 
 // Save to file (in production, use database)
 $booking_data = [
@@ -70,10 +90,24 @@ $booking_data = [
     'phone' => $phone,
     'email' => $email,
     'service' => $service,
+    'service_name' => htmlspecialchars(trim($input['service_name'] ?? $service)),
+    'service_price' => htmlspecialchars(trim($input['service_price'] ?? '₹0')),
     'date' => $date,
     'time' => $time,
+    'time_display' => htmlspecialchars(trim($input['time_display'] ?? $time)),
     'message' => $message,
+    'customer_source' => htmlspecialchars(trim($input['customer_source'] ?? 'direct')),
+    'login_name' => htmlspecialchars(trim($input['login_name'] ?? '')),
+    'login_phone' => htmlspecialchars(trim($input['login_phone'] ?? '')),
+    'booking_ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+    'user_agent' => htmlspecialchars($_SERVER['HTTP_USER_AGENT'] ?? 'unknown'),
+    'referrer' => htmlspecialchars($_SERVER['HTTP_REFERER'] ?? 'direct'),
+    'session_id' => session_id() ?: uniqid('sess_'),
+    'booking_method' => 'online_form',
+    'payment_status' => 'pending',
+    'estimated_duration' => getServiceDuration($service),
     'created_at' => date('Y-m-d H:i:s'),
+    'updated_at' => date('Y-m-d H:i:s'),
     'status' => 'pending'
 ];
 
@@ -91,6 +125,7 @@ if (file_put_contents($bookings_file, json_encode($existing_bookings, JSON_PRETT
 
 // Save to CSV/Excel file
 saveToExcel($booking_data);
+saveToCSV($booking_data);
 
 // Send WhatsApp notifications to both customer and admin
 $admin_phone = '919069020005';
@@ -200,11 +235,75 @@ function saveToExcel($booking_data) {
     }
 }
 
+// Function to save to comprehensive CSV with analytics
+function saveToCSV($booking_data) {
+    $csv_file = 'complete_bookings.csv';
+    
+    try {
+        // Service rates for cost estimation
+        $service_rates = [
+            'facial' => 1500, 'haircut' => 800, 'makeup' => 2500, 'manicure' => 600,
+            'pedicure' => 800, 'threading' => 300, 'waxing' => 1200, 'massage' => 2000
+        ];
+        
+        // Check if file exists, if not create with headers
+        if (!file_exists($csv_file)) {
+            $headers = [
+                'Token Number', 'Customer Name', 'Phone Number', 'Email Address',
+                'Service Requested', 'Appointment Date', 'Appointment Time',
+                'Special Requests', 'Current Status', 'Booking Date/Time',
+                'Estimated Cost', 'Customer Type'
+            ];
+            
+            $fp = fopen($csv_file, 'w');
+            if ($fp) {
+                fputcsv($fp, $headers);
+                fclose($fp);
+            }
+        }
+        
+        // Calculate estimated cost
+        $service = strtolower($booking_data['service'] ?? '');
+        $estimated_cost = $service_rates[$service] ?? 1000;
+        
+        // Append new booking data
+        $fp = fopen($csv_file, 'a');
+        if ($fp) {
+            $row = [
+                $booking_data['token_number'],
+                $booking_data['name'],
+                $booking_data['phone'],
+                $booking_data['email'],
+                $booking_data['service'],
+                $booking_data['date'],
+                $booking_data['time'],
+                $booking_data['message'] ?: 'No special requests',
+                strtoupper($booking_data['status']),
+                $booking_data['created_at'],
+                '₹' . $estimated_cost,
+                'New Customer' // Will be updated in analytics
+            ];
+            
+            fputcsv($fp, $row);
+            fclose($fp);
+        }
+    } catch (Exception $e) {
+        error_log('Complete CSV save error: ' . $e->getMessage());
+    }
+}
+
 echo json_encode([
     'success' => true,
     'message' => 'Appointment booked successfully! Your token number is: ' . $token_number,
     'booking_id' => $booking_data['id'],
     'token_number' => $token_number,
-    'admin_notified' => true
+    'admin_notified' => true,
+    'booking_details' => [
+        'service' => $booking_data['service_name'],
+        'date' => $booking_data['date'],
+        'time' => $booking_data['time_display'],
+        'price' => $booking_data['service_price'],
+        'duration' => $booking_data['estimated_duration']
+    ]
 ]);
 ?>

@@ -71,16 +71,18 @@ echo '</p>';
 
 echo '<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">';
 echo '<tr style="background-color: #d4af37; color: white; font-weight: bold; text-align: center;">';
-echo '<th>Token #</th>';
+echo '<th>S.No.</th>';
+echo '<th>Token Number</th>';
 echo '<th>Customer Name</th>';
 echo '<th>Phone Number</th>';
 echo '<th>Email Address</th>';
-echo '<th>Service</th>';
+echo '<th>Service Requested</th>';
 echo '<th>Appointment Date</th>';
 echo '<th>Appointment Time</th>';
 echo '<th>Special Requests</th>';
-echo '<th>Status</th>';
+echo '<th>Current Status</th>';
 echo '<th>Booking Date/Time</th>';
+echo '<th>Days Since Booking</th>';
 echo '</tr>';
 
 // Output booking data with alternating row colors
@@ -90,39 +92,82 @@ foreach ($bookings as $booking) {
     $bg_color = ($row_count % 2 == 0) ? '#f8f9fa' : '#ffffff';
     $status_color = ($booking['status'] === 'confirmed') ? '#d4edda' : '#fff3cd';
     
+    // Calculate days since booking
+    $booking_date = new DateTime($booking['created_at']);
+    $current_date = new DateTime();
+    $days_diff = $current_date->diff($booking_date)->days;
+    
     echo '<tr style="background-color: ' . $bg_color . ';">';
-    echo '<td style="text-align: center; font-weight: bold; color: #d4af37;">' . htmlspecialchars($booking['token_number'] ?? '') . '</td>';
-    echo '<td>' . htmlspecialchars($booking['name'] ?? '') . '</td>';
-    echo '<td>' . htmlspecialchars($booking['phone'] ?? '') . '</td>';
+    echo '<td style="text-align: center; font-weight: bold;">' . $row_count . '</td>';
+    echo '<td style="text-align: center; font-weight: bold; color: #d4af37; font-size: 14px;">' . htmlspecialchars($booking['token_number'] ?? '') . '</td>';
+    echo '<td style="font-weight: bold;">' . htmlspecialchars($booking['name'] ?? '') . '</td>';
+    echo '<td style="text-align: center;">' . htmlspecialchars($booking['phone'] ?? '') . '</td>';
     echo '<td>' . htmlspecialchars($booking['email'] ?? '') . '</td>';
-    echo '<td>' . htmlspecialchars($booking['service'] ?? '') . '</td>';
-    echo '<td style="text-align: center;">' . htmlspecialchars($booking['date'] ?? '') . '</td>';
-    echo '<td style="text-align: center;">' . htmlspecialchars($booking['time'] ?? '') . '</td>';
-    echo '<td>' . htmlspecialchars($booking['message'] ?? 'None') . '</td>';
+    echo '<td style="font-weight: bold; color: #0066cc;">' . htmlspecialchars($booking['service'] ?? '') . '</td>';
+    echo '<td style="text-align: center; font-weight: bold;">' . htmlspecialchars($booking['date'] ?? '') . '</td>';
+    echo '<td style="text-align: center; font-weight: bold;">' . htmlspecialchars($booking['time'] ?? '') . '</td>';
+    echo '<td style="font-style: italic;">' . htmlspecialchars($booking['message'] ?? 'No special requests') . '</td>';
     echo '<td style="background-color: ' . $status_color . '; text-align: center; font-weight: bold;">' . 
-         htmlspecialchars(strtoupper($booking['status'] ?? 'pending')) . '</td>';
+         htmlspecialchars(strtoupper($booking['status'] ?? 'PENDING')) . '</td>';
     echo '<td style="text-align: center;">' . htmlspecialchars($booking['created_at'] ?? '') . '</td>';
+    echo '<td style="text-align: center; font-weight: bold; color: ' . ($days_diff > 7 ? '#dc3545' : '#28a745') . ';">' . $days_diff . ' days</td>';
     echo '</tr>';
 }
 
 echo '</table>';
 
-// Add summary statistics
+// Add comprehensive summary statistics
 $total_bookings = count($bookings);
 $confirmed_bookings = count(array_filter($bookings, function($b) { return $b['status'] === 'confirmed'; }));
 $pending_bookings = count(array_filter($bookings, function($b) { return $b['status'] === 'pending'; }));
 
+// Service analysis
+$service_stats = [];
+foreach ($bookings as $booking) {
+    $service = $booking['service'] ?? 'Unknown';
+    $service_stats[$service] = ($service_stats[$service] ?? 0) + 1;
+}
+arsort($service_stats);
+
+// Revenue estimation
+$service_rates = [
+    'facial' => 1500, 'haircut' => 800, 'makeup' => 2500, 'manicure' => 600,
+    'pedicure' => 800, 'threading' => 300, 'waxing' => 1200, 'massage' => 2000
+];
+$estimated_revenue = 0;
+foreach ($bookings as $booking) {
+    $service = strtolower($booking['service'] ?? '');
+    $estimated_revenue += $service_rates[$service] ?? 1000;
+}
+
 echo '<br><br>';
-echo '<table border="1" cellpadding="8" cellspacing="0" style="width: 50%; border-collapse: collapse;">';
+echo '<div style="display: flex; gap: 20px;">';
+
+// Summary table
+echo '<table border="1" cellpadding="8" cellspacing="0" style="width: 40%; border-collapse: collapse;">';
 echo '<tr style="background-color: #f8f9fa; font-weight: bold;">';
 echo '<th colspan="2" style="text-align: center; color: #d4af37;">📈 BOOKING SUMMARY</th>';
 echo '</tr>';
-echo '<tr><td><strong>Total Bookings:</strong></td><td style="text-align: center;">' . $total_bookings . '</td></tr>';
-echo '<tr><td><strong>Confirmed Bookings:</strong></td><td style="text-align: center; color: green;">' . $confirmed_bookings . '</td></tr>';
-echo '<tr><td><strong>Pending Bookings:</strong></td><td style="text-align: center; color: orange;">' . $pending_bookings . '</td></tr>';
+echo '<tr><td><strong>Total Bookings:</strong></td><td style="text-align: center; font-weight: bold;">' . $total_bookings . '</td></tr>';
+echo '<tr><td><strong>Confirmed Bookings:</strong></td><td style="text-align: center; color: green; font-weight: bold;">' . $confirmed_bookings . '</td></tr>';
+echo '<tr><td><strong>Pending Bookings:</strong></td><td style="text-align: center; color: orange; font-weight: bold;">' . $pending_bookings . '</td></tr>';
+echo '<tr><td><strong>Estimated Revenue:</strong></td><td style="text-align: center; color: #d4af37; font-weight: bold;">₹' . number_format($estimated_revenue) . '</td></tr>';
 echo '<tr><td><strong>Export Date:</strong></td><td style="text-align: center;">' . date('Y-m-d H:i:s') . '</td></tr>';
 echo '<tr><td><strong>Generated By:</strong></td><td style="text-align: center;">Simran Beauty Admin</td></tr>';
 echo '</table>';
+
+// Service popularity table
+echo '<table border="1" cellpadding="8" cellspacing="0" style="width: 40%; border-collapse: collapse;">';
+echo '<tr style="background-color: #f8f9fa; font-weight: bold;">';
+echo '<th colspan="2" style="text-align: center; color: #d4af37;">💄 SERVICE POPULARITY</th>';
+echo '</tr>';
+foreach ($service_stats as $service => $count) {
+    $percentage = round(($count / $total_bookings) * 100, 1);
+    echo '<tr><td><strong>' . htmlspecialchars($service) . ':</strong></td><td style="text-align: center;">' . $count . ' (' . $percentage . '%)</td></tr>';
+}
+echo '</table>';
+
+echo '</div>';
 
 echo '<br><p style="font-size: 12px; color: #666; text-align: center;">🔒 This file contains confidential customer information. Handle with care.</p>';
 echo '</body>';

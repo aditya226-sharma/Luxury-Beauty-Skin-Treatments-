@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Simran Beauty Parlour</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #d4af37 0%, #f4e4bc 50%, #fff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 25px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            position: relative;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .logo {
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .logo::before {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        .logo h1 {
+            font-family: 'Playfair Display', serif;
+            color: #d4af37;
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(212, 175, 55, 0.2);
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .login-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .option-card {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .option-card:hover::before {
+            left: 100%;
+        }
+
+        .option-card:hover {
+            border-color: #d4af37;
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.25);
+        }
+
+        .option-card.active {
+            border-color: #d4af37;
+            background: linear-gradient(145deg, #fff9e6, #ffffff);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .option-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .user-login .option-icon {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .admin-login .option-icon {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .option-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: #333;
+        }
+
+        .option-desc {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .login-form {
+            display: none;
+            margin-top: 2rem;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-header h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-form h3 {
+            color: #007bff;
+        }
+
+        .admin-form h3 {
+            color: #28a745;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+            text-align: left;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.8rem;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #d4af37;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        input:focus + .input-icon {
+            color: #d4af37;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: #d4af37;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            margin-top: 1rem;
+        }
+
+        .back-btn:hover {
+            box-shadow: 0 10px 25px rgba(108, 117, 125, 0.4);
+        }
+
+        .error {
+            color: #dc3545;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            padding: 0.8rem;
+            background: rgba(220, 53, 69, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .success {
+            color: #28a745;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            padding: 0.8rem;
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #d4af37;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes sparkle {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+            50% { transform: translateX(-50%) scale(1.2); opacity: 0.8; }
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .forgot-password a {
+            color: #d4af37;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            color: #b8941f;
+            text-decoration: underline;
+        }
+
+        .security-info {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: #666;
+            border-left: 4px solid #d4af37;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 2rem 1.5rem;
+                margin: 10px;
+            }
+
+            .logo h1 {
+                font-size: 2.2rem;
+            }
+
+            .option-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .option-icon {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>🌟 Simran Beauty</h1>
+            <p>Welcome to Panipat's Premier Beauty Destination</p>
+        </div>
+        
+        <!-- Login Options -->
+        <div id="loginOptions" class="login-options">
+            <div class="option-card user-login" onclick="showUserLogin()">
+                <i class="fas fa-user option-icon"></i>
+                <div class="option-title">Customer Portal</div>
+                <div class="option-desc">Book appointments, view history & manage profile</div>
+            </div>
+            <div class="option-card admin-login" onclick="showAdminLogin()">
+                <i class="fas fa-shield-alt option-icon"></i>
+                <div class="option-title">Admin Dashboard</div>
+                <div class="option-desc">Manage bookings, customers & business operations</div>
+            </div>
+        </div>
+
+        <!-- User Login Form -->
+        <div id="userLoginForm" class="login-form">
+            <div class="form-header">
+                <h3 class="user-form"><i class="fas fa-user"></i> Customer Access</h3>
+                <p>Enter your details to access your account</p>
+            </div>
+            <form id="userForm">
+                <div class="form-group">
+                    <label for="userName">Full Name</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="userName" name="userName" required>
+                        <i class="fas fa-user input-icon"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="userPhone">Phone Number</label>
+                    <div class="input-wrapper">
+                        <input type="tel" id="userPhone" name="userPhone" required pattern="[0-9]{10}">
+                        <i class="fas fa-phone input-icon"></i>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Enter Website
+                </button>
+                <button type="button" class="login-btn back-btn" onclick="showOptions()">
+                    <i class="fas fa-arrow-left"></i> Back to Options
+                </button>
+            </form>
+            <div id="userError" class="error" style="display: none;"></div>
+            <div id="userSuccess" class="success" style="display: none;"></div>
+            <div id="userLoading" class="loading">
+                <div class="spinner"></div>
+                <p>Logging you in...</p>
+            </div>
+        </div>
+
+        <!-- Admin Login Form -->
+        <div id="adminLoginForm" class="login-form">
+            <div class="form-header">
+                <h3 class="admin-form"><i class="fas fa-shield-alt"></i> Admin Access</h3>
+                <p>Secure login for authorized personnel only</p>
+            </div>
+            <form id="adminForm">
+                <div class="form-group">
+                    <label for="adminUsername">Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="adminUsername" name="adminUsername" required>
+                        <i class="fas fa-user-shield input-icon"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="adminPassword" name="adminPassword" required>
+                        <i class="fas fa-lock input-icon"></i>
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('adminPassword')"></i>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-unlock-alt"></i> Access Admin Panel
+                </button>
+                <button type="button" class="login-btn back-btn" onclick="showOptions()">
+                    <i class="fas fa-arrow-left"></i> Back to Options
+                </button>
+            </form>
+            <div class="forgot-password">
+                <a href="#" onclick="showForgotPassword()">Forgot Password?</a>
+            </div>
+            <div id="adminError" class="error" style="display: none;"></div>
+            <div id="adminSuccess" class="success" style="display: none;"></div>
+            <div id="adminLoading" class="loading">
+                <div class="spinner"></div>
+                <p>Authenticating...</p>
+            </div>
+            <div class="security-info">
+                <i class="fas fa-info-circle"></i> Your session is secured with encryption
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showOptions() {
+            document.getElementById('loginOptions').style.display = 'flex';
+            document.getElementById('userLoginForm').style.display = 'none';
+            document.getElementById('adminLoginForm').style.display = 'none';
+            clearMessages();
+        }
+
+        function showUserLogin() {
+            document.getElementById('loginOptions').style.display = 'none';
+            document.getElementById('userLoginForm').style.display = 'block';
+            document.getElementById('adminLoginForm').style.display = 'none';
+            clearMessages();
+            document.getElementById('userName').focus();
+        }
+
+        function showAdminLogin() {
+            document.getElementById('loginOptions').style.display = 'none';
+            document.getElementById('userLoginForm').style.display = 'none';
+            document.getElementById('adminLoginForm').style.display = 'block';
+            clearMessages();
+            document.getElementById('adminUsername').focus();
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const toggle = input.parentElement.querySelector('.password-toggle');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                toggle.classList.remove('fa-eye');
+                toggle.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                toggle.classList.remove('fa-eye-slash');
+                toggle.classList.add('fa-eye');
+            }
+        }
+
+        function clearMessages() {
+            document.querySelectorAll('.error, .success').forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
+        }
+
+        function showMessage(elementId, message, isError = true) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        function showLoading(loadingId, show = true) {
+            document.getElementById(loadingId).style.display = show ? 'block' : 'none';
+        }
+
+        function validatePhone(phone) {
+            const phoneRegex = /^[6-9]\d{9}$/;
+            return phoneRegex.test(phone);
+        }
+
+        function validateName(name) {
+            return name.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(name.trim());
+        }
+
+        // User Login
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const userName = document.getElementById('userName').value.trim();
+            const userPhone = document.getElementById('userPhone').value.trim();
+            
+            clearMessages();
+            
+            // Validation
+            if (!validateName(userName)) {
+                showMessage('userError', '❌ Please enter a valid name (letters only, minimum 2 characters)');
+                return;
+            }
+            
+            if (!validatePhone(userPhone)) {
+                showMessage('userError', '❌ Please enter a valid 10-digit Indian mobile number');
+                return;
+            }
+            
+            showLoading('userLoading', true);
+            
+            // Simulate API call
+            setTimeout(() => {
+                showLoading('userLoading', false);
+                
+                // Store user info with timestamp
+                const userData = {
+                    name: userName,
+                    phone: userPhone,
+                    loginTime: new Date().toISOString(),
+                    sessionId: 'user_' + Date.now()
+                };
+                
+                sessionStorage.setItem('userLoggedIn', 'true');
+                sessionStorage.setItem('userData', JSON.stringify(userData));
+                
+                showMessage('userSuccess', '✅ Login successful! Redirecting...', false);
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            }, 2000);
+        });
+
+        // Admin Login
+        document.getElementById('adminForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            
+            clearMessages();
+            
+            if (!username || !password) {
+                showMessage('adminError', '❌ Please fill in all fields');
+                return;
+            }
+            
+            showLoading('adminLoading', true);
+            
+            // Simulate API authentication
+            setTimeout(() => {
+                showLoading('adminLoading', false);
+                
+                // Enhanced admin credentials check
+                const validCredentials = [
+                    { username: 'gurubakshadmin', password: 'beauty2024@GB' },
+                    { username: 'admin', password: 'Gurubaksh@123' },
+                    { username: 'simranadmin', password: 'beauty2024' }
+                ];
+                
+                const isValid = validCredentials.some(cred => 
+                    cred.username === username && cred.password === password
+                );
+                
+                if (isValid) {
+                    // Set admin session with enhanced security
+                    const adminData = {
+                        username: username,
+                        loginTime: new Date().toISOString(),
+                        sessionId: 'admin_' + Date.now(),
+                        permissions: ['view_bookings', 'manage_customers', 'export_data']
+                    };
+                    
+                    sessionStorage.setItem('adminLoggedIn', 'true');
+                    sessionStorage.setItem('adminData', JSON.stringify(adminData));
+                    
+                    showMessage('adminSuccess', '✅ Authentication successful! Accessing admin panel...', false);
+                    
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 1500);
+                } else {
+                    showMessage('adminError', '❌ Invalid credentials. Access denied.');
+                    
+                    // Security: Clear form after failed attempt
+                    setTimeout(() => {
+                        document.getElementById('adminUsername').value = '';
+                        document.getElementById('adminPassword').value = '';
+                        document.getElementById('adminUsername').focus();
+                    }, 2000);
+                }
+            }, 2000);
+        });
+
+        function showForgotPassword() {
+            alert('🔐 For password recovery, please contact the system administrator at admin@gurubakshbeauty.com or call +91-XXXXXXXXXX');
+        }
+
+        // Enhanced security: Clear sensitive data on page unload
+        window.addEventListener('beforeunload', function() {
+            // Clear any temporary sensitive data
+            document.getElementById('adminPassword').value = '';
+        });
+
+        // Auto-focus and enter key handling
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const activeForm = document.querySelector('.login-form[style*="block"]');
+                if (activeForm) {
+                    const submitBtn = activeForm.querySelector('button[type="submit"]');
+                    if (submitBtn) submitBtn.click();
+                }
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if already logged in
+            if (sessionStorage.getItem('userLoggedIn') === 'true') {
+                if (confirm('You are already logged in. Do you want to continue to the website?')) {
+                    window.location.href = 'index.html';
+                } else {
+                    sessionStorage.removeItem('userLoggedIn');
+                    sessionStorage.removeItem('userData');
+                }
+            }
+            
+            if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+                if (confirm('You are already logged in as admin. Do you want to continue to admin panel?')) {
+                    window.location.href = 'admin.html';
+                } else {
+                    sessionStorage.removeItem('adminLoggedIn');
+                    sessionStorage.removeItem('adminData');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

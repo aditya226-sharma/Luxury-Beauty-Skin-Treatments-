@@ -3,300 +3,935 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Gurubaksh Beauty</title>
+    <title>Admin Panel - Simran Beauty Parlour</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f5f5f5; }
-        .header { background: #d4af37; color: white; padding: 1rem; text-align: center; }
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
-        .booking-card { background: white; margin: 1rem 0; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .booking-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .booking-id { font-weight: bold; color: #d4af37; }
-        .status { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; }
-        .status.pending { background: #fff3cd; color: #856404; }
-        .status.confirmed { background: #d4edda; color: #155724; }
-        .booking-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
-        .detail-item { margin-bottom: 0.5rem; }
-        .detail-label { font-weight: bold; color: #666; }
-        .actions { margin-top: 1rem; }
-        .btn { padding: 0.5rem 1rem; margin-right: 0.5rem; border: none; border-radius: 4px; cursor: pointer; }
-        .btn-confirm { background: #28a745; color: white; }
-        .btn-delete { background: #dc3545; color: white; }
-        .no-bookings { text-align: center; color: #666; padding: 2rem; }
-        .stats { background: white; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-around; }
-        .stat-item { text-align: center; }
-        .stat-number { font-size: 2rem; font-weight: bold; color: #d4af37; }
-        .stat-label { color: #666; font-size: 0.9rem; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #d4af37, #b8941f);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .admin-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-title h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .refresh-btn, .export-btn, .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .refresh-btn:hover, .export-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .logout-btn {
+            background: rgba(220,53,69,0.8);
+        }
+
+        .logout-btn:hover {
+            background: rgba(220,53,69,1);
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid #d4af37;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            color: #28a745;
+        }
+
+        .bookings-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+        }
+
+        .bookings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bookings-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #dee2e6;
+            position: sticky;
+            top: 0;
+        }
+
+        .bookings-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+
+        .bookings-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .token-number {
+            font-weight: 600;
+            color: #d4af37;
+            font-size: 0.9rem;
+        }
+
+        .customer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .customer-contact {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .service-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .service-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .service-price {
+            font-size: 0.85rem;
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .appointment-datetime {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .appointment-date {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .appointment-time {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-completed {
+            background: #cce5ff;
+            color: #004085;
+            border: 1px solid #b3d7ff;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.3rem 0.6rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .confirm-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .confirm-btn:hover {
+            background: #218838;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .view-btn {
+            background: #007bff;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: #0056b3;
+        }
+
+        .booking-message {
+            max-width: 200px;
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .created-at {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .no-bookings {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #d4af37;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .booking-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .detail-item {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #d4af37;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            color: #333;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 0 1rem;
+            }
+
+            .bookings-table {
+                font-size: 0.8rem;
+            }
+
+            .bookings-table th,
+            .bookings-table td {
+                padding: 0.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Simran Beauty - Admin Panel</h1>
-        <p>Manage Appointments</p>
-        <div style="margin-top: 1rem;">
-            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <label for="fromDate" style="font-weight: bold;">From:</label>
-                    <input type="date" id="fromDate" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-                </div>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <label for="toDate" style="font-weight: bold;">To:</label>
-                    <input type="date" id="toDate" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-                </div>
-                <a href="#" onclick="exportToExcel()" class="btn" style="background: #28a745; color: white; text-decoration: none; display: inline-block;">
-                    📊 Export to Excel
-                </a>
-                <button onclick="loadBookings()" class="btn" style="background: #007bff; color: white;">
-                    🔄 Refresh
+    <div class="admin-header">
+        <div class="header-content">
+            <div class="admin-title">
+                <i class="fas fa-shield-alt"></i>
+                <h1>Admin Dashboard</h1>
+            </div>
+            <div class="admin-actions">
+                <button class="refresh-btn" onclick="loadBookings()">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Refresh</span>
                 </button>
-                <button onclick="logout()" class="btn" style="background: #dc3545; color: white;">
-                    🚪 Logout
+                <a href="export-bookings-csv.php" class="export-btn" target="_blank">
+                    <i class="fas fa-download"></i>
+                    <span>Export CSV</span>
+                </a>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
                 </button>
             </div>
         </div>
     </div>
-    
-    <div class="container">
-        <div class="stats" id="stats">
-            <div class="stat-item">
-                <div class="stat-number" id="total-bookings">0</div>
-                <div class="stat-label">Total Bookings</div>
+
+    <div class="admin-container">
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Bookings</h3>
+                <div class="stat-number" id="totalBookings">0</div>
+                <div class="stat-change">All time bookings</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-number" id="pending-bookings">0</div>
-                <div class="stat-label">Pending</div>
+            <div class="stat-card">
+                <h3>Pending Bookings</h3>
+                <div class="stat-number" id="pendingBookings">0</div>
+                <div class="stat-change">Awaiting confirmation</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-number" id="confirmed-bookings">0</div>
-                <div class="stat-label">Confirmed</div>
+            <div class="stat-card">
+                <h3>Today's Bookings</h3>
+                <div class="stat-number" id="todayBookings">0</div>
+                <div class="stat-change">Appointments today</div>
+            </div>
+            <div class="stat-card">
+                <h3>This Month</h3>
+                <div class="stat-number" id="monthBookings">0</div>
+                <div class="stat-change">Monthly bookings</div>
             </div>
         </div>
-        
-        <div id="bookings-container">
-            <div class="no-bookings">Loading bookings...</div>
+
+        <!-- Bookings Table -->
+        <div class="bookings-section">
+            <div class="section-header">
+                <h2 class="section-title">All Bookings</h2>
+                <div class="filter-controls">
+                    <select class="filter-select" id="statusFilter" onchange="filterBookings()">
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <select class="filter-select" id="dateFilter" onchange="filterBookings()">
+                        <option value="all">All Dates</option>
+                        <option value="today">Today</option>
+                        <option value="tomorrow">Tomorrow</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="loadingState" class="loading">
+                <div class="spinner"></div>
+                <p>Loading bookings...</p>
+            </div>
+
+            <div id="bookingsContainer" style="display: none;">
+                <table class="bookings-table">
+                    <thead>
+                        <tr>
+                            <th>Token #</th>
+                            <th>Customer Details</th>
+                            <th>Service & Price</th>
+                            <th>Appointment</th>
+                            <th>Duration</th>
+                            <th>Special Requests</th>
+                            <th>Status</th>
+                            <th>Booking Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody">
+                        <!-- Bookings will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="noBookings" class="no-bookings" style="display: none;">
+                <i class="fas fa-calendar-times" style="font-size: 3rem; color: #ddd; margin-bottom: 1rem;"></i>
+                <h3>No bookings found</h3>
+                <p>No appointments match your current filters.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Detail Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Booking Details</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="bookingDetails" class="booking-detail-grid">
+                <!-- Booking details will be loaded here -->
+            </div>
         </div>
     </div>
 
     <script>
+        let allBookings = [];
+        let filteredBookings = [];
+
         // Check admin authentication
-        function checkAuth() {
-            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
-            
-            if (!isLoggedIn) {
-                window.location.href = 'login.html';
-                return false;
-            }
-            return true;
+        if (!sessionStorage.getItem('adminLoggedIn')) {
+            window.location.href = 'enhanced-login.html';
         }
-        
-        // Check auth on page load
-        if (!checkAuth()) {
-            return;
-        }
-        
-        // Set default date range (last 30 days)
+
+        // Load bookings on page load
         document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date();
-            const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
-            
-            document.getElementById('toDate').value = today.toISOString().split('T')[0];
-            document.getElementById('fromDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+            loadBookings();
+            // Auto-refresh every 30 seconds
+            setInterval(loadBookings, 30000);
         });
-        
-        function loadBookings() {
-            // Try to fetch from PHP, fallback to localStorage
-            fetch('get-bookings.php')
-                .then(response => {
-                    if (!response.ok) throw new Error('Server not available');
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Loaded bookings:', data);
-                    displayBookings(data);
-                })
-                .catch(error => {
-                    console.log('Server error, using localStorage fallback:', error);
-                    const localBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                    displayBookings(localBookings);
-                });
+
+        async function loadBookings() {
+            try {
+                const response = await fetch('get-bookings.php');
+                const bookings = await response.json();
+                
+                allBookings = bookings;
+                filteredBookings = bookings;
+                
+                updateStatistics();
+                displayBookings();
+                
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('bookingsContainer').style.display = bookings.length > 0 ? 'block' : 'none';
+                document.getElementById('noBookings').style.display = bookings.length === 0 ? 'block' : 'none';
+                
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                document.getElementById('loadingState').innerHTML = '<p style="color: red;">Error loading bookings. Please refresh the page.</p>';
+            }
         }
-    
-    function displayBookings(data) {
-        const container = document.getElementById('bookings-container');
-        
-        // Update statistics
-        const totalBookings = data.length;
-        const pendingBookings = data.filter(b => b.status === 'pending').length;
-        const confirmedBookings = data.filter(b => b.status === 'confirmed').length;
-        
-        document.getElementById('total-bookings').textContent = totalBookings;
-        document.getElementById('pending-bookings').textContent = pendingBookings;
-        document.getElementById('confirmed-bookings').textContent = confirmedBookings;
-        
-        if (data.length === 0) {
-            container.innerHTML = '<div class="no-bookings">📋 No bookings found. <a href="booking.html">Create a test booking</a> or <a href="verify-system.php">verify system</a>.</div>';
-            return;
+
+        function updateStatistics() {
+            const total = allBookings.length;
+            const pending = allBookings.filter(b => b.status === 'pending').length;
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todayBookings = allBookings.filter(b => b.date === today).length;
+            
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            const monthBookings = allBookings.filter(b => {
+                const bookingDate = new Date(b.date);
+                return bookingDate.getMonth() === currentMonth && bookingDate.getFullYear() === currentYear;
+            }).length;
+
+            document.getElementById('totalBookings').textContent = total;
+            document.getElementById('pendingBookings').textContent = pending;
+            document.getElementById('todayBookings').textContent = todayBookings;
+            document.getElementById('monthBookings').textContent = monthBookings;
         }
-                    
-        container.innerHTML = data.map(booking => `
-                        <div class="booking-card">
-                            <div class="booking-header">
-                                <span class="booking-id">Token: #${booking.token_number || booking.id}</span>
-                                <span class="status ${booking.status || 'pending'}">${(booking.status || 'pending').toUpperCase()}</span>
-                            </div>
-                            <div class="booking-details">
-                                <div class="detail-item">
-                                    <div class="detail-label">🎫 Token Number:</div>
-                                    <div><strong style="color: #d4af37; font-size: 1.2em;">#${booking.token_number || 'N/A'}</strong></div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">👤 Customer Name:</div>
-                                    <div><strong>${booking.name || 'N/A'}</strong></div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">📱 Phone Number:</div>
-                                    <div><strong>+91 ${booking.phone || 'N/A'}</strong></div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">📧 Email Address:</div>
-                                    <div>${booking.email || 'N/A'}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">💄 Service Requested:</div>
-                                    <div><strong>${booking.service || 'N/A'}</strong></div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">📅 Appointment Date:</div>
-                                    <div><strong>${booking.date || 'N/A'}</strong></div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">⏰ Appointment Time:</div>
-                                    <div><strong>${booking.time || 'N/A'}</strong></div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">💬 Special Requests:</div>
-                                    <div style="font-style: italic;">${booking.message || 'No special requests'}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">📝 Booking Created:</div>
-                                    <div>${booking.created_at || 'N/A'}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">📊 Current Status:</div>
-                                    <div><span class="status ${booking.status || 'pending'}" style="padding: 4px 8px; border-radius: 12px;">${(booking.status || 'pending').toUpperCase()}</span></div>
-                                </div>
-                            </div>
-                            <div class="actions">
-                                ${(booking.status || 'pending') === 'pending' ? `<button class="btn btn-confirm" onclick="updateStatus('${booking.id || booking.token_number}', 'confirmed')">✅ Confirm</button>` : ''}
-                                <button class="btn btn-delete" onclick="deleteBooking('${booking.id || booking.token_number}')">🗑️ Delete</button>
-                                <a href="https://wa.me/91${booking.phone}?text=Hello ${booking.name}, your appointment (Token: ${booking.token_number}) has been confirmed at Simran Beauty Parlour." target="_blank" class="btn" style="background: #25D366; color: white; text-decoration: none; display: inline-block;">📱 WhatsApp</a>
-                            </div>
+
+        function displayBookings() {
+            const tbody = document.getElementById('bookingsTableBody');
+            tbody.innerHTML = '';
+
+            if (filteredBookings.length === 0) {
+                document.getElementById('bookingsContainer').style.display = 'none';
+                document.getElementById('noBookings').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('bookingsContainer').style.display = 'block';
+            document.getElementById('noBookings').style.display = 'none';
+
+            filteredBookings.forEach(booking => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="token-number">${booking.token_number || booking.id}</div>
+                    </td>
+                    <td>
+                        <div class="customer-info">
+                            <div class="customer-name">${booking.name}</div>
+                            <div class="customer-contact">📞 ${booking.phone}</div>
+                            <div class="customer-contact">✉️ ${booking.email}</div>
+                            ${booking.login_name ? `<div class="customer-contact">👤 ${booking.login_name}</div>` : ''}
+                            ${booking.customer_source ? `<div class="customer-contact">📍 ${booking.customer_source}</div>` : ''}
                         </div>
-        `).join('');
+                    </td>
+                    <td>
+                        <div class="service-info">
+                            <div class="service-name">${booking.service_name || booking.service}</div>
+                            <div class="service-price">${booking.service_price || 'Price not set'}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="appointment-datetime">
+                            <div class="appointment-date">📅 ${formatDate(booking.date)}</div>
+                            <div class="appointment-time">⏰ ${booking.time_display || booking.time}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.85rem; color: #666;">
+                            ⏱️ ${booking.estimated_duration || '60 min'}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="booking-message">${booking.message || 'No special requests'}</div>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${booking.status}">${booking.status}</span>
+                    </td>
+                    <td>
+                        <div class="created-at">${formatDateTime(booking.created_at)}</div>
+                    </td>
+                    <td>
+                        <div class="booking-actions">
+                            <button class="action-btn view-btn" onclick="viewBooking('${booking.id}')">
+                                <i class="fas fa-eye"></i>
+                                View
+                            </button>
+                            ${booking.status === 'pending' ? `
+                                <button class="action-btn confirm-btn" onclick="confirmBooking('${booking.id}')">
+                                    <i class="fas fa-check"></i>
+                                    Confirm
+                                </button>
+                            ` : ''}
+                            <button class="action-btn delete-btn" onclick="deleteBooking('${booking.id}')">
+                                <i class="fas fa-trash"></i>
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
         }
-        
-        function updateStatus(id, status) {
-            // Try PHP first, fallback to localStorage
-            fetch('update-booking.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, status })
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Server not available');
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
+
+        function filterBookings() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+
+            filteredBookings = allBookings.filter(booking => {
+                let statusMatch = statusFilter === 'all' || booking.status === statusFilter;
+                let dateMatch = true;
+
+                if (dateFilter !== 'all') {
+                    const bookingDate = new Date(booking.date);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    switch (dateFilter) {
+                        case 'today':
+                            dateMatch = bookingDate.toDateString() === today.toDateString();
+                            break;
+                        case 'tomorrow':
+                            const tomorrow = new Date(today);
+                            tomorrow.setDate(tomorrow.getDate() + 1);
+                            dateMatch = bookingDate.toDateString() === tomorrow.toDateString();
+                            break;
+                        case 'week':
+                            const weekFromNow = new Date(today);
+                            weekFromNow.setDate(weekFromNow.getDate() + 7);
+                            dateMatch = bookingDate >= today && bookingDate <= weekFromNow;
+                            break;
+                        case 'month':
+                            dateMatch = bookingDate.getMonth() === today.getMonth() && 
+                                       bookingDate.getFullYear() === today.getFullYear();
+                            break;
+                    }
+                }
+
+                return statusMatch && dateMatch;
+            });
+
+            displayBookings();
+        }
+
+        function viewBooking(bookingId) {
+            const booking = allBookings.find(b => b.id === bookingId);
+            if (!booking) return;
+
+            const detailsContainer = document.getElementById('bookingDetails');
+            detailsContainer.innerHTML = `
+                <div class="detail-item">
+                    <div class="detail-label">Token Number</div>
+                    <div class="detail-value">${booking.token_number || booking.id}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Customer Name</div>
+                    <div class="detail-value">${booking.name}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Phone Number</div>
+                    <div class="detail-value">${booking.phone}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Email Address</div>
+                    <div class="detail-value">${booking.email}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Service Requested</div>
+                    <div class="detail-value">${booking.service_name || booking.service}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Service Price</div>
+                    <div class="detail-value">${booking.service_price || 'Not specified'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Appointment Date</div>
+                    <div class="detail-value">${formatDate(booking.date)}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Appointment Time</div>
+                    <div class="detail-value">${booking.time_display || booking.time}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Special Requests</div>
+                    <div class="detail-value">${booking.message || 'None'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Customer Source</div>
+                    <div class="detail-value">${booking.customer_source || 'Direct'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Login Name</div>
+                    <div class="detail-value">${booking.login_name || 'Not provided'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Login Phone</div>
+                    <div class="detail-value">${booking.login_phone || 'Not provided'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Booking Status</div>
+                    <div class="detail-value">
+                        <span class="status-badge status-${booking.status}">${booking.status}</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Booking Created</div>
+                    <div class="detail-value">${formatDateTime(booking.created_at)}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Last Updated</div>
+                    <div class="detail-value">${formatDateTime(booking.updated_at || booking.created_at)}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Estimated Duration</div>
+                    <div class="detail-value">${booking.estimated_duration || 'Not specified'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Booking Method</div>
+                    <div class="detail-value">${booking.booking_method || 'Online Form'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Payment Status</div>
+                    <div class="detail-value">
+                        <span class="status-badge status-${booking.payment_status || 'pending'}">${booking.payment_status || 'pending'}</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Session ID</div>
+                    <div class="detail-value">${booking.session_id || 'Not available'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">IP Address</div>
+                    <div class="detail-value">${booking.booking_ip || 'Not recorded'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Referrer Source</div>
+                    <div class="detail-value">${booking.referrer || 'Direct'}</div>
+                </div>
+            `;
+
+            document.getElementById('bookingModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+
+        async function confirmBooking(bookingId) {
+            if (!confirm('Are you sure you want to confirm this booking?')) return;
+
+            try {
+                const response = await fetch('update-booking.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: bookingId,
+                        status: 'confirmed'
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Booking confirmed successfully!');
                     loadBookings();
                 } else {
-                    alert('Error updating booking');
+                    alert('Error confirming booking: ' + result.message);
                 }
-            })
-            .catch(error => {
-                // Fallback to localStorage
-                let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                const bookingIndex = bookings.findIndex(b => b.token_number === id || b.id === id);
-                if (bookingIndex !== -1) {
-                    bookings[bookingIndex].status = status;
-                    localStorage.setItem('bookings', JSON.stringify(bookings));
-                    loadBookings();
-                }
-            });
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error confirming booking. Please try again.');
+            }
         }
-        
-        function deleteBooking(id) {
-            if (confirm('Are you sure you want to delete this booking?')) {
-                // Try PHP first, fallback to localStorage
-                fetch('delete-booking.php', {
+
+        async function deleteBooking(bookingId) {
+            if (!confirm('Are you sure you want to delete this booking? This action cannot be undone.')) return;
+
+            try {
+                const response = await fetch('delete-booking.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id })
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Server not available');
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        loadBookings();
-                    } else {
-                        alert('Error deleting booking');
-                    }
-                })
-                .catch(error => {
-                    // Fallback to localStorage
-                    let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                    bookings = bookings.filter(b => b.token_number !== id && b.id !== id);
-                    localStorage.setItem('bookings', JSON.stringify(bookings));
-                    loadBookings();
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: bookingId
+                    })
                 });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Booking deleted successfully!');
+                    loadBookings();
+                } else {
+                    alert('Error deleting booking: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting booking. Please try again.');
             }
         }
-        
-        // Load bookings on page load
-        loadBookings();
-        
-        // Export to Excel function
-        function exportToExcel() {
-            const fromDate = document.getElementById('fromDate').value;
-            const toDate = document.getElementById('toDate').value;
-            
-            // Create URL with parameters for direct download
-            const params = new URLSearchParams({
-                'auth_token': 'simran_admin_2024',
-                'from_date': fromDate,
-                'to_date': toDate
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
             });
-            
-            // Open in new window to trigger download
-            window.open('secure-export.php?' + params.toString(), '_blank');
         }
-        
-        // Logout function
+
+        function formatDateTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+            return date.toLocaleString('en-IN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
         function logout() {
-            sessionStorage.removeItem('adminLoggedIn');
-            window.location.href = 'admin-login.html';
+            if (confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('adminLoggedIn');
+                sessionStorage.removeItem('adminData');
+                window.location.href = 'enhanced-login.html';
+            }
         }
-        
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date();
-            const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
-            
-            if (document.getElementById('toDate')) {
-                document.getElementById('toDate').value = today.toISOString().split('T')[0];
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('bookingModal');
+            if (event.target === modal) {
+                closeModal();
             }
-            if (document.getElementById('fromDate')) {
-                document.getElementById('fromDate').value = thirtyDaysAgo.toISOString().split('T')[0];
-            }
-            
-            // Load bookings after DOM is ready
-            loadBookings();
-        });
-        
-        // Refresh every 30 seconds
-        setInterval(loadBookings, 30000);
+        }
     </script>
 </body>
 </html>

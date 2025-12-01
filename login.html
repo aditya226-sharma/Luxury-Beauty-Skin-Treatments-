@@ -4,33 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Simran Beauty Parlour</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: 'Inter', Arial, sans-serif; 
-            background: linear-gradient(135deg, #d4af37, #f4e4bc);
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #d4af37 0%, #f4e4bc 50%, #fff 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
         }
         .login-container {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
             padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-radius: 25px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.2);
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             text-align: center;
+            position: relative;
+            border: 1px solid rgba(212, 175, 55, 0.2);
         }
         .logo {
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .logo::before {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+            50% { transform: translateX(-50%) scale(1.2); opacity: 0.8; }
         }
         .logo h1 {
+            font-family: 'Playfair Display', serif;
             color: #d4af37;
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin-bottom: 0.5rem;
             font-weight: 700;
+            text-shadow: 0 2px 4px rgba(212, 175, 55, 0.2);
         }
         .logo p {
             color: #666;
@@ -131,10 +168,7 @@
             background: linear-gradient(135deg, #007bff, #0056b3);
             color: white;
         }
-        .admin-login {
-            background: linear-gradient(135deg, #28a745, #1e7e34);
-            color: white;
-        }
+
     </style>
 </head>
 <body>
@@ -144,116 +178,62 @@
             <p>Welcome to Panipat's Premier Beauty Destination</p>
         </div>
         
-        <!-- Login Options -->
-        <div id="loginOptions" class="login-options">
-            <div class="option-card user-login" onclick="showUserLogin()">
-                <div class="option-icon">👤</div>
-                <div class="option-title">Customer Login</div>
-                <div class="option-desc">Book appointments and access services</div>
-            </div>
-            <div class="option-card admin-login" onclick="showAdminLogin()">
-                <div class="option-icon">🔐</div>
-                <div class="option-title">Admin Login</div>
-                <div class="option-desc">Manage bookings and admin panel</div>
-            </div>
-        </div>
-
-        <!-- User Login Form -->
-        <div id="userLoginForm" class="login-form">
+        <!-- Customer Login Form -->
+        <div id="customerLoginForm" class="login-form" style="display: block;">
             <h3 style="margin-bottom: 1.5rem; color: #007bff;">👤 Customer Access</h3>
-            <form id="userForm">
+            <form id="customerForm">
                 <div class="form-group">
-                    <label for="userName">Your Name</label>
-                    <input type="text" id="userName" name="userName" required>
+                    <label for="customerName">Your Name</label>
+                    <input type="text" id="customerName" name="customerName" required>
                 </div>
                 <div class="form-group">
-                    <label for="userPhone">Phone Number</label>
-                    <input type="tel" id="userPhone" name="userPhone" required>
+                    <label for="customerPhone">Phone Number</label>
+                    <input type="tel" id="customerPhone" name="customerPhone" required>
                 </div>
                 <button type="submit" class="login-btn">🚀 Enter Website</button>
-                <button type="button" class="login-btn back-btn" onclick="showOptions()">← Back</button>
             </form>
-            <div id="userError" class="error"></div>
+            <div id="customerError" class="error"></div>
         </div>
 
-        <!-- Admin Login Form -->
-        <div id="adminLoginForm" class="login-form">
-            <h3 style="margin-bottom: 1.5rem; color: #28a745;">🔐 Admin Access</h3>
-            <form id="adminForm">
-                <div class="form-group">
-                    <label for="adminUsername">Username</label>
-                    <input type="text" id="adminUsername" name="adminUsername" required>
-                </div>
-                <div class="form-group">
-                    <label for="adminPassword">Password</label>
-                    <input type="password" id="adminPassword" name="adminPassword" required>
-                </div>
-                <button type="submit" class="login-btn">🔓 Access Admin Panel</button>
-                <button type="button" class="login-btn back-btn" onclick="showOptions()">← Back</button>
-            </form>
-            <div id="adminError" class="error"></div>
-        </div>
+
     </div>
 
     <script>
-        function showOptions() {
-            document.getElementById('loginOptions').style.display = 'flex';
-            document.getElementById('userLoginForm').style.display = 'none';
-            document.getElementById('adminLoginForm').style.display = 'none';
-        }
-
-        function showUserLogin() {
-            document.getElementById('loginOptions').style.display = 'none';
-            document.getElementById('userLoginForm').style.display = 'block';
-            document.getElementById('adminLoginForm').style.display = 'none';
-        }
-
-        function showAdminLogin() {
-            document.getElementById('loginOptions').style.display = 'none';
-            document.getElementById('userLoginForm').style.display = 'none';
-            document.getElementById('adminLoginForm').style.display = 'block';
-        }
-
-        // User Login
-        document.getElementById('userForm').addEventListener('submit', function(e) {
+        // Customer login form handler
+        document.getElementById('customerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const userName = document.getElementById('userName').value;
-            const userPhone = document.getElementById('userPhone').value;
-            const errorDiv = document.getElementById('userError');
+            const name = document.getElementById('customerName').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
             
-            if (userName.trim() && userPhone.trim()) {
-                // Store user info
-                sessionStorage.setItem('userLoggedIn', 'true');
-                sessionStorage.setItem('userName', userName);
-                sessionStorage.setItem('userPhone', userPhone);
+            if (name && phone) {
+                // Store customer info in localStorage
+                localStorage.setItem('customerName', name);
+                localStorage.setItem('customerPhone', phone);
+                localStorage.setItem('userLoggedIn', 'true');
                 
-                // Redirect to main website
-                window.location.href = 'index.html';
+                // Show success message and redirect
+                document.getElementById('customerError').style.color = '#28a745';
+                document.getElementById('customerError').textContent = '✅ Login successful! Redirecting...';
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
             } else {
-                errorDiv.textContent = '❌ Please fill in all fields';
-                setTimeout(() => errorDiv.textContent = '', 3000);
+                document.getElementById('customerError').textContent = '❌ Please fill in all fields';
+                setTimeout(() => {
+                    document.getElementById('customerError').textContent = '';
+                }, 3000);
             }
         });
 
-        // Admin Login
-        document.getElementById('adminForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
-            const errorDiv = document.getElementById('adminError');
-            
-            if (username === 'simranadmin' && password === 'beauty2024') {
-                // Set admin session
-                sessionStorage.setItem('adminLoggedIn', 'true');
-                
-                // Redirect to admin panel
-                window.location.href = 'admin.html';
-            } else {
-                errorDiv.textContent = '❌ Invalid admin credentials';
-                setTimeout(() => errorDiv.textContent = '', 3000);
+        // Phone number validation
+        document.getElementById('customerPhone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 10) {
+                value = value.slice(0, 10);
             }
+            e.target.value = value;
         });
     </script>
 </body>
