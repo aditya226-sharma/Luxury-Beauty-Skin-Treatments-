@@ -299,6 +299,30 @@ class BookingForm {
         }
     }
     
+    buildAdminWhatsAppMessage(formData, tokenNumber) {
+        const adminPhone = '919069020005';
+        const msg =
+            `🔔 *NEW BOOKING - SIMRAN BEAUTY* 🔔\n\n` +
+            `🎫 *TOKEN: ${tokenNumber}*\n\n` +
+            `👤 *CUSTOMER DETAILS:*\n` +
+            `• Name: ${formData.name}\n` +
+            `• Phone: +91 ${formData.phone}\n` +
+            `• Email: ${formData.email}\n\n` +
+            `💄 *SERVICE DETAILS:*\n` +
+            `• Service: ${formData.service_name}\n` +
+            `• Price: ${formData.service_price}\n` +
+            `• Date: ${this.formatDate(formData.date)}\n` +
+            `• Time: ${formData.time_display}\n` +
+            (formData.message ? `• Special Requests: ${formData.message}\n` : '') +
+            `\n⚡ Please confirm this appointment!`;
+        return `https://wa.me/${adminPhone}?text=${encodeURIComponent(msg)}`;
+    }
+
+    sendAdminWhatsApp(formData, tokenNumber) {
+        const url = this.buildAdminWhatsAppMessage(formData, tokenNumber);
+        window.open(url, '_blank');
+    }
+
     async submitForm() {
         if (!this.selectedService || !this.selectedTime || !this.selectedDate) {
             this.showNotification('Please complete all required fields', 'error');
@@ -337,15 +361,20 @@ class BookingForm {
             const result = await response.json();
             
             if (result.success) {
-                this.showSuccess(result.token_number || 'N/A');
-                this.sendConfirmationMessage(result.token_number || 'N/A');
+                const token = result.token_number || 'N/A';
+                this.showSuccess(token);
+                this.sendConfirmationMessage(token);
+                // Send booking details to admin WhatsApp
+                setTimeout(() => this.sendAdminWhatsApp(formData, token), 1500);
             } else {
                 throw new Error(result.message || 'Booking failed');
             }
         } catch (error) {
             console.error('Booking error:', error);
-            this.showNotification('Booking confirmed! We will contact you shortly.', 'success');
-            this.showSuccess('TEMP-' + Date.now().toString().slice(-4));
+            const token = 'SB-' + Date.now().toString().slice(-6);
+            this.showSuccess(token);
+            // Send booking details to admin WhatsApp even on PHP fallback
+            setTimeout(() => this.sendAdminWhatsApp(formData, token), 1500);
         } finally {
             this.showLoading(false);
         }
@@ -371,7 +400,7 @@ class BookingForm {
         if (tokenNumber && success) {
             const successContent = success.querySelector('p');
             if (successContent) {
-                successContent.innerHTML = `🎉 Your appointment has been successfully booked!<br><br><strong>📋 Token Number: ${tokenNumber}</strong><br><br>📱 We'll send you a WhatsApp confirmation shortly.<br>📞 Our team will call you to confirm the appointment.`;
+                successContent.innerHTML = `🎉 Your appointment has been successfully booked!<br><br><strong>📋 Token Number: ${tokenNumber}</strong><br><br>📱 WhatsApp is opening to notify the admin.<br>📞 Our team will call you to confirm the appointment.`;
             }
         }
         
