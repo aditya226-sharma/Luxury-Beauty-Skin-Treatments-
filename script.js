@@ -2,7 +2,7 @@
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
 
-hamburger.addEventListener('click', () => {
+if (hamburger) hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('active');
     navMenu.classList.toggle('active');
     
@@ -74,123 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Form submission handling
-document.getElementById('appointmentForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = new FormData(this);
-    const appointmentData = {
-        name: formData.get('name'),
-        phone: formData.get('phone'),
-        email: formData.get('email'),
-        service: formData.get('service'),
-        date: formData.get('date'),
-        time: formData.get('time'),
-        message: formData.get('message')
-    };
-    
-    // Validate required fields
-    if (!appointmentData.name || !appointmentData.phone || !appointmentData.email || 
-        !appointmentData.service || !appointmentData.date || !appointmentData.time) {
-        showNotification('Please fill in all required fields.', 'error');
-        return;
-    }
-    
-    // Validate phone number (basic validation)
-    const phoneRegex = /^[6-9]\d{9}$/;
-    if (!phoneRegex.test(appointmentData.phone)) {
-        showNotification('Please enter a valid 10-digit phone number.', 'error');
-        return;
-    }
-    
-    // Validate email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(appointmentData.email)) {
-        showNotification('Please enter a valid email address.', 'error');
-        return;
-    }
-    
-    // Check if date is not in the past
-    const selectedDate = new Date(appointmentData.date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    if (selectedDate < today) {
-        showNotification('Please select a future date.', 'error');
-        return;
-    }
-    
-    // Submit to backend or fallback to local storage
-    showNotification('Processing your appointment request...', 'info');
-    
-    // Try PHP backend first, fallback to local storage
-    fetch('booking-handler.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(appointmentData)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Server not available');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            showNotification(data.message + ' WhatsApp notifications sent to both you and admin!', 'success');
-            
-            // Show token number prominently
-            if (data.token_number) {
-                setTimeout(() => {
-                    showToast(`🎫 Your Token: ${data.token_number} - WhatsApp messages sent!`, 8000);
-                }, 1000);
-                
-                // Show WhatsApp notification options
-                setTimeout(() => {
-                    showWhatsAppOptions(data.token_number, appointmentData);
-                }, 2500);
-            }
-            
-            this.reset();
-        } else {
-            showNotification(data.message, 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Server error, using fallback:', error);
-        
-        // Fallback: Save to localStorage and show success
-        let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-        const tokenNumber = bookings.length + 1;
-        appointmentData.token_number = tokenNumber;
-        appointmentData.created_at = new Date().toISOString();
-        appointmentData.status = 'pending';
-        
-        // Save to localStorage
-        bookings.push(appointmentData);
-        localStorage.setItem('bookings', JSON.stringify(bookings));
-        
-        showNotification('Appointment booked successfully! Your token: ' + tokenNumber + '. WhatsApp notifications sent to both you and admin!', 'success');
-        
-        setTimeout(() => {
-            showToast(`🎫 Your Token: ${tokenNumber} - WhatsApp messages sent!`, 8000);
-        }, 1000);
-        
-        this.reset();
-        
-        // Create WhatsApp message
-        const whatsappMessage = createWhatsAppMessage(appointmentData, tokenNumber);
-        
-        setTimeout(() => {
-            if (confirm('Send appointment details via WhatsApp for confirmation?')) {
-                window.open(`https://wa.me/919069020005?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
-            }
-        }, 2000);
-    });
-});
+// Form submission is handled by BookingForm class in booking-enhanced.js
+// when loaded on booking.html
 
 // Create WhatsApp message from form data
 function createWhatsAppMessage(data, tokenNumber = '') {
@@ -369,21 +254,21 @@ function createLightbox(src, alt) {
     document.body.appendChild(lightbox);
     
     // Close functionality
-    closeBtn.addEventListener('click', () => closeLightbox(lightbox));
+    closeBtn.addEventListener('click', () => closeLightboxEl(lightbox));
     lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) closeLightbox(lightbox);
+        if (e.target === lightbox) closeLightboxEl(lightbox);
     });
     
     // ESC key to close
     document.addEventListener('keydown', function escHandler(e) {
         if (e.key === 'Escape') {
-            closeLightbox(lightbox);
+            closeLightboxEl(lightbox);
             document.removeEventListener('keydown', escHandler);
         }
     });
 }
 
-function closeLightbox(lightbox) {
+function closeLightboxEl(lightbox) {
     lightbox.style.animation = 'fadeOut 0.3s ease';
     setTimeout(() => lightbox.remove(), 300);
 }
@@ -790,6 +675,7 @@ function openLightbox(index) {
 
 function closeLightbox() {
     const lightbox = document.getElementById('lightbox');
+    if (!lightbox) return;
     lightbox.style.display = 'none';
     document.body.style.overflow = 'auto';
 }
@@ -816,8 +702,11 @@ document.addEventListener('keydown', function(e) {
 });
 
 // Close lightbox on background click
-document.getElementById('lightbox').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeLightbox();
-    }
-});
+const _lightboxEl = document.getElementById('lightbox');
+if (_lightboxEl) {
+    _lightboxEl.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeLightbox();
+        }
+    });
+}

@@ -133,10 +133,12 @@ class BookingForm {
         const selectedDate = document.getElementById('date').value;
         if (!selectedDate) return;
         
-        const selectedDateObj = new Date(selectedDate);
+        const [y, m, d] = selectedDate.split('-').map(Number);
+        const selectedDateObj = new Date(y, m - 1, d);
         const today = new Date();
-        const isToday = selectedDateObj.toDateString() === today.toDateString();
-        const currentHour = today.getHours();
+        today.setHours(0, 0, 0, 0);
+        const isToday = selectedDateObj.getTime() === today.getTime();
+        const currentHour = new Date().getHours();
         
         document.querySelectorAll('.time-slot').forEach(slot => {
             const slotHour = parseInt(slot.dataset.time.split(':')[0]);
@@ -413,7 +415,8 @@ class BookingForm {
     
     // Utility functions
     formatDate(dateString) {
-        const date = new Date(dateString);
+        const [y, m, d] = dateString.split('-').map(Number);
+        const date = new Date(y, m - 1, d);
         return date.toLocaleDateString('en-IN', {
             weekday: 'long',
             year: 'numeric',

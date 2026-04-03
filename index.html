@@ -553,30 +553,29 @@
     
     <script>
         // Check if user is logged in
-        if (!sessionStorage.getItem('userLoggedIn') && !sessionStorage.getItem('adminLoggedIn')) {
-            window.location.href = 'enhanced-login.html';
-        }
-        
-        // Display welcome message for logged in user
-        const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
-        const customerName = userData.name;
-        if (customerName) {
-            // Add welcome message to navigation or hero section
-            const welcomeMsg = document.createElement('div');
-            welcomeMsg.style.cssText = 'position: fixed; top: 70px; right: 20px; background: #d4af37; color: white; padding: 10px 15px; border-radius: 25px; z-index: 1000; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);';
-            welcomeMsg.innerHTML = `👋 Welcome, ${customerName}!`;
-            document.body.appendChild(welcomeMsg);
-            
-            // Auto-hide welcome message after 5 seconds
-            setTimeout(() => {
-                welcomeMsg.style.opacity = '0';
-                welcomeMsg.style.transition = 'opacity 0.5s';
-                setTimeout(() => welcomeMsg.remove(), 500);
-            }, 5000);
-        }
-        
-        // Enhanced Hero Animations
         document.addEventListener('DOMContentLoaded', function() {
+            if (!sessionStorage.getItem('userLoggedIn') && !sessionStorage.getItem('adminLoggedIn')) {
+                window.location.href = 'enhanced-login.html';
+                return;
+            }
+        
+            // Display welcome message for logged in user
+            const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+            const customerName = userData.name;
+            if (customerName) {
+                const welcomeMsg = document.createElement('div');
+                welcomeMsg.style.cssText = 'position: fixed; top: 70px; right: 20px; background: #d4af37; color: white; padding: 10px 15px; border-radius: 25px; z-index: 1000; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);';
+                const nameNode = document.createTextNode('👋 Welcome, ' + customerName + '!');
+                welcomeMsg.appendChild(nameNode);
+                document.body.appendChild(welcomeMsg);
+                
+                setTimeout(() => {
+                    welcomeMsg.style.opacity = '0';
+                    welcomeMsg.style.transition = 'opacity 0.5s';
+                    setTimeout(() => welcomeMsg.remove(), 500);
+                }, 5000);
+            }
+
             // Add logout functionality
             const logoutBtn = document.createElement('button');
             logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';

@@ -568,13 +568,19 @@
         let allBookings = [];
         let filteredBookings = [];
 
-        // Check admin authentication
-        if (!sessionStorage.getItem('adminLoggedIn')) {
-            window.location.href = 'enhanced-login.html';
+        function sanitize(str) {
+            const div = document.createElement('div');
+            div.textContent = str == null ? '' : String(str);
+            return div.innerHTML;
         }
 
         // Load bookings on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Check admin authentication inside DOMContentLoaded
+            if (!sessionStorage.getItem('adminLoggedIn')) {
+                window.location.href = 'enhanced-login.html';
+                return;
+            }
             loadBookings();
             // Auto-refresh every 30 seconds
             setInterval(loadBookings, 30000);
@@ -583,8 +589,10 @@
         async function loadBookings() {
             try {
                 const response = await fetch('get-bookings.php');
+                if (!response.ok) throw new Error('Server error: ' + response.statusText);
                 const bookings = await response.json();
-                
+                if (!Array.isArray(bookings)) throw new Error('Invalid response from server');
+
                 allBookings = bookings;
                 filteredBookings = bookings;
                 
@@ -605,7 +613,8 @@
             const total = allBookings.length;
             const pending = allBookings.filter(b => b.status === 'pending').length;
             
-            const today = new Date().toISOString().split('T')[0];
+            const now = new Date();
+            const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
             const todayBookings = allBookings.filter(b => b.date === today).length;
             
             const currentMonth = new Date().getMonth();
@@ -636,58 +645,59 @@
 
             filteredBookings.forEach(booking => {
                 const row = document.createElement('tr');
+                row.dataset.id = booking.id;
                 row.innerHTML = `
                     <td>
-                        <div class="token-number">${booking.token_number || booking.id}</div>
+                        <div class="token-number">${sanitize(booking.token_number || booking.id)}</div>
                     </td>
                     <td>
                         <div class="customer-info">
-                            <div class="customer-name">${booking.name}</div>
-                            <div class="customer-contact">📞 ${booking.phone}</div>
-                            <div class="customer-contact">✉️ ${booking.email}</div>
-                            ${booking.login_name ? `<div class="customer-contact">👤 ${booking.login_name}</div>` : ''}
-                            ${booking.customer_source ? `<div class="customer-contact">📍 ${booking.customer_source}</div>` : ''}
+                            <div class="customer-name">${sanitize(booking.name)}</div>
+                            <div class="customer-contact">📞 ${sanitize(booking.phone)}</div>
+                            <div class="customer-contact">✉️ ${sanitize(booking.email)}</div>
+                            ${booking.login_name ? `<div class="customer-contact">👤 ${sanitize(booking.login_name)}</div>` : ''}
+                            ${booking.customer_source ? `<div class="customer-contact">📍 ${sanitize(booking.customer_source)}</div>` : ''}
                         </div>
                     </td>
                     <td>
                         <div class="service-info">
-                            <div class="service-name">${booking.service_name || booking.service}</div>
-                            <div class="service-price">${booking.service_price || 'Price not set'}</div>
+                            <div class="service-name">${sanitize(booking.service_name || booking.service)}</div>
+                            <div class="service-price">${sanitize(booking.service_price || 'Price not set')}</div>
                         </div>
                     </td>
                     <td>
                         <div class="appointment-datetime">
                             <div class="appointment-date">📅 ${formatDate(booking.date)}</div>
-                            <div class="appointment-time">⏰ ${booking.time_display || booking.time}</div>
+                            <div class="appointment-time">⏰ ${sanitize(booking.time_display || booking.time)}</div>
                         </div>
                     </td>
                     <td>
                         <div style="font-size: 0.85rem; color: #666;">
-                            ⏱️ ${booking.estimated_duration || '60 min'}
+                            ⏱️ ${sanitize(booking.estimated_duration || '60 min')}
                         </div>
                     </td>
                     <td>
-                        <div class="booking-message">${booking.message || 'No special requests'}</div>
+                        <div class="booking-message">${sanitize(booking.message || 'No special requests')}</div>
                     </td>
                     <td>
-                        <span class="status-badge status-${booking.status}">${booking.status}</span>
+                        <span class="status-badge status-${sanitize(booking.status)}">${sanitize(booking.status)}</span>
                     </td>
                     <td>
                         <div class="created-at">${formatDateTime(booking.created_at)}</div>
                     </td>
                     <td>
                         <div class="booking-actions">
-                            <button class="action-btn view-btn" onclick="viewBooking('${booking.id}')">
+                            <button class="action-btn view-btn" data-action="view">
                                 <i class="fas fa-eye"></i>
                                 View
                             </button>
                             ${booking.status === 'pending' ? `
-                                <button class="action-btn confirm-btn" onclick="confirmBooking('${booking.id}')">
+                                <button class="action-btn confirm-btn" data-action="confirm">
                                     <i class="fas fa-check"></i>
                                     Confirm
                                 </button>
                             ` : ''}
-                            <button class="action-btn delete-btn" onclick="deleteBooking('${booking.id}')">
+                            <button class="action-btn delete-btn" data-action="delete">
                                 <i class="fas fa-trash"></i>
                                 Delete
                             </button>
@@ -695,6 +705,16 @@
                     </td>
                 `;
                 tbody.appendChild(row);
+            });
+
+            tbody.addEventListener('click', function(e) {
+                const btn = e.target.closest('[data-action]');
+                if (!btn) return;
+                const id = btn.closest('tr').dataset.id;
+                const action = btn.dataset.action;
+                if (action === 'view') viewBooking(id);
+                else if (action === 'confirm') confirmBooking(id);
+                else if (action === 'delete') deleteBooking(id);
             });
         }
 
@@ -707,7 +727,8 @@
                 let dateMatch = true;
 
                 if (dateFilter !== 'all') {
-                    const bookingDate = new Date(booking.date);
+                    const [y, m, d] = (booking.date || '').split('-');
+                    const bookingDate = new Date(y, m - 1, d);
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
 
@@ -739,7 +760,7 @@
         }
 
         function viewBooking(bookingId) {
-            const booking = allBookings.find(b => b.id === bookingId);
+            const booking = allBookings.find(b => String(b.id) === String(bookingId));
             if (!booking) return;
 
             const detailsContainer = document.getElementById('bookingDetails');
@@ -897,7 +918,9 @@
         }
 
         function formatDate(dateString) {
+            if (!dateString) return 'N/A';
             const date = new Date(dateString);
+            if (isNaN(date.getTime())) return 'Invalid Date';
             return date.toLocaleDateString('en-IN', {
                 weekday: 'short',
                 year: 'numeric',
@@ -907,7 +930,9 @@
         }
 
         function formatDateTime(dateTimeString) {
+            if (!dateTimeString) return 'N/A';
             const date = new Date(dateTimeString);
+            if (isNaN(date.getTime())) return 'Invalid Date';
             return date.toLocaleString('en-IN', {
                 year: 'numeric',
                 month: 'short',
@@ -926,12 +951,12 @@
         }
 
         // Close modal when clicking outside
-        window.onclick = function(event) {
+        window.addEventListener('click', function(event) {
             const modal = document.getElementById('bookingModal');
             if (event.target === modal) {
                 closeModal();
             }
-        }
+        });
     </script>
 </body>
 </html>

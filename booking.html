@@ -311,13 +311,13 @@
         }
         
         // Pre-fill form with customer data if available
-        const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
-        if (userData.name && userData.phone) {
-            document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+            if (userData.name && userData.phone) {
                 document.getElementById('name').value = userData.name;
                 document.getElementById('phone').value = userData.phone;
-            });
-        }
+            }
+        });
     </script>
     <script src="script.js"></script>
     <script src="booking-enhanced.js"></script>

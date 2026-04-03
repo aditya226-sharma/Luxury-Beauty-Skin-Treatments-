@@ -322,6 +322,9 @@
             background: rgba(40, 167, 69, 0.1);
             border-radius: 8px;
             border-left: 4px solid #28a745;
+        }round: rgba(40, 167, 69, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
         }
 
         .loading {
@@ -632,45 +635,27 @@
             setTimeout(() => {
                 showLoading('adminLoading', false);
                 
-                // Enhanced admin credentials check
-                const validCredentials = [
-                    { username: 'gurubakshadmin', password: 'beauty2024@GB' },
-                    { username: 'admin', password: 'Gurubaksh@123' },
-                    { username: 'simranadmin', password: 'beauty2024' }
-                ];
-                
-                const isValid = validCredentials.some(cred => 
-                    cred.username === username && cred.password === password
-                );
-                
-                if (isValid) {
-                    // Set admin session with enhanced security
+                // Verify admin credentials
+                if (username === 'simranadmin' && password === 'beauty2024') {
                     const adminData = {
                         username: username,
                         loginTime: new Date().toISOString(),
                         sessionId: 'admin_' + Date.now(),
                         permissions: ['view_bookings', 'manage_customers', 'export_data']
                     };
-                    
                     sessionStorage.setItem('adminLoggedIn', 'true');
                     sessionStorage.setItem('adminData', JSON.stringify(adminData));
-                    
                     showMessage('adminSuccess', '✅ Authentication successful! Accessing admin panel...', false);
-                    
-                    setTimeout(() => {
-                        window.location.href = 'admin.html';
-                    }, 1500);
+                    setTimeout(() => { window.location.href = 'admin.html'; }, 1500);
                 } else {
                     showMessage('adminError', '❌ Invalid credentials. Access denied.');
-                    
-                    // Security: Clear form after failed attempt
                     setTimeout(() => {
                         document.getElementById('adminUsername').value = '';
                         document.getElementById('adminPassword').value = '';
                         document.getElementById('adminUsername').focus();
                     }, 2000);
                 }
-            }, 2000);
+            }, 500);
         });
 
         function showForgotPassword() {
